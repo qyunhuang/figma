@@ -8,6 +8,7 @@ import 'virtual:uno.css'
 import '@/styles/var.less'
 import '@/styles/mixin.less'
 import '@/styles/global.less'
+import '@/styles/index.css'
 
 // 创建 Pinia 实例
 const pinia = createPinia()
