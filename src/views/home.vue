@@ -17,6 +17,7 @@ const canvasRef = ref<HTMLCanvasElement | null>(null)
 const fabricRef = ref<fabric.Canvas | null>(null)
 const shapeRef = ref<fabric.Object | null>(null)
 const selectedShapeRef = ref<selectedShapeRefType>('rect')
+const startPointRef = ref<{ x: number; y: number } | null>(null)
 
 const setSelectedShapeRef = (shape: selectedShapeRefType) => {
   selectedShapeRef.value = shape
@@ -30,15 +31,15 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   if (!canvas) return
 
   canvas.on('mouse:down', (options) => {
-    handleMouseMoveDown({ options, canvas, shapeRef, selectedShapeRef })
+    handleMouseMoveDown({ options, canvas, shapeRef, selectedShapeRef, startPointRef })
   })
 
   canvas.on('mouse:move', (options) => {
-    handleMouseMove({ options, canvas, shapeRef, selectedShapeRef })
+    handleMouseMove({ options, canvas, shapeRef, selectedShapeRef, startPointRef })
   })
 
   canvas.on('mouse:up', () => {
-    handleMouseMoveUp(shapeRef)
+    handleMouseMoveUp(shapeRef, startPointRef)
   })
 }
 

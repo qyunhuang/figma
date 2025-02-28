@@ -80,7 +80,7 @@ const shapeToolItems: {
 }[] = [
   { icon: Square, name: 'Rectangle', type: 'rect' },
   { icon: Slash, name: 'Line', type: 'line' },
-  { icon: Circle, name: 'Circle', type: 'circle' },
+  { icon: Circle, name: 'Ellipse', type: 'ellipse' },
   { icon: Triangle, name: 'Triangle', type: 'triangle' },
 ]
 const shapeToolNameMap : {
@@ -88,7 +88,7 @@ const shapeToolNameMap : {
 } = {
   rect: Square,
   line: Slash,
-  circle: Circle,
+  ellipse: Circle,
   triangle: Triangle,
   image: Image,
 }

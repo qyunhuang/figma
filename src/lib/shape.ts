@@ -11,8 +11,8 @@ export const createSpecificShape = (
       return createRectangle(pointer)
     case "triangle":
       return createTriangle(pointer)
-    case "circle":
-      return createCircle(pointer)
+    case "ellipse":
+      return createEllipse(pointer)
     case "line":
       return createLine(pointer)
     case "text":
@@ -44,11 +44,12 @@ export const createTriangle = (pointer: PointerEvent) => {
   } as CustomFabricObject<fabric.Triangle>)
 }
 
-export const createCircle = (pointer: PointerEvent) => {
-  return new fabric.Circle({
+export const createEllipse = (pointer: PointerEvent) => {
+  return new fabric.Ellipse({
     left: pointer.x,
     top: pointer.y,
-    radius: 100,
+    rx: 100,
+    ry: 100,
     fill: "#d9d9d9",
     objectId: uuidv4(),
   } as any)

@@ -44,7 +44,6 @@ export const handleMouseMoveDown = ({
 } : CanvasMouseDown) => {
   const pointer = canvas.getPointer(options.e)
   const target = canvas.findTarget(options.e, false)
-  console.log(target, target?.type)
   canvas.isDrawingMode = false
 
   if (target && target.type === selectedShapeRef.value) {
@@ -73,10 +72,10 @@ export const handleMouseMove = ({
         height: pointer.y - (shapeRef.value?.top || 0),
       })
       break
-    case "circle":
-        shapeRef.value?.set({
-          // @ts-ignore
-          radius: Math.abs(pointer.x - (shapeRef.value?.left || 0)) / 2,
+    case "ellipse":
+        (shapeRef.value as fabric.Ellipse)?.set({
+          rx: Math.abs(pointer.x - (shapeRef.value?.left || 0)) / 2,
+          ry: Math.abs(pointer.y - (shapeRef.value?.top || 0)) / 2,
         })
         break
     case "triangle":
@@ -86,8 +85,7 @@ export const handleMouseMove = ({
       })
       break
     case "line":
-        shapeRef.value?.set({
-          // @ts-ignore
+        (shapeRef.value as fabric.Line)?.set({
           x2: pointer.x,
           y2: pointer.y,
         })
@@ -100,5 +98,4 @@ export const handleMouseMove = ({
 
 export const handleMouseMoveUp = (shapeRef: Ref<fabric.Object | null>) => {
   shapeRef.value = null
-
 }
