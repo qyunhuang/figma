@@ -25,9 +25,8 @@ const closePopover = () => {
   isOpen.value = false
 }
 
-// 向外部暴露 closePopover 函数
 defineExpose({
-  closePopover,
+  closePopover
 })
 </script>
 
@@ -42,6 +41,7 @@ defineExpose({
 }
 
 .popover-content {
+  width: 140px;
   position: absolute;
   bottom: 50px;
   left: 50%;

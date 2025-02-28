@@ -1,110 +1,149 @@
 <template>
   <div class="tool-belt">
     <div 
-      class="icon-container" 
-      :class="{ cur: tool === 'move' }"
-      @click="setTool('move')"
+      v-for="(group, index) in optionsRef" 
+      :key="group.name"
+      class="icon-group"
     >
-      <MousePointer2 :size="20" :stroke-width="1" :color="tool === 'move' ? 'white' : 'black'" />
-    </div>
-    <div class="icon-group">
       <div 
         class="icon-container" 
-        :class="{ cur: tool === 'shape' }"
-        @click="setTool('shape')"
+        :class="{ 'selected-group': curGroupIndex === index }"
+        @click="setGroup(index)"
       >
-        <component :is="shapeToolNameMap[selectedShapeRef]" :size="20" :stroke-width="1" :color="tool === 'shape' ? 'white' : 'black'" />
+        <component 
+          :is="group.options[group.selectedIndex].icon" 
+          :size="20" 
+          :stroke-width="1" 
+          :color="curGroupIndex === index ? 'white' : 'black'" 
+        />
       </div>
-      <div>
-        <Popover ref="popoverRef">
+
+      <!-- 如果工具组有多个选项，显示下拉箭头 -->
+      <div v-if="group.options.length > 1">
+        <Popover ref="popoverRefs">
           <template #trigger>
-            <div
-              class="select-container" 
-            >
+            <div class="select-container" @click="closeOtherPopovers(index)">
               <ChevronDown :size="12" :stroke-width="1" />
             </div>
           </template>
           <template #content>
             <div class="bg-[#1e1e1e]">
+              <!-- 遍历工具组的二级选项 -->
               <div 
-                v-for="shapeToolItem in shapeToolItems" 
-                :key="shapeToolItem.type"
+                v-for="(option, secondIndex) in group.options" 
+                :key="option.type"
                 class="shape-tool-item"
-                @click="setShapeTool(shapeToolItem.type)"
+                @click="setTool(option.type, index, secondIndex)"
               >
-                <Check :size="12" :stroke-width="1" color="white" :style="{opacity: selectedShapeRef as any === shapeToolItem.type ? 1 : 0}" />
-                <component :is="shapeToolItem.icon" :size="16" :stroke-width="1" class="ml-1" color="white" />
-                <div class="ml-3 text-white text-[13px]">{{ shapeToolItem.name }}</div>
+                <Check 
+                  :size="12" 
+                  :stroke-width="1" 
+                  color="white" 
+                  :style="{ opacity: group.selectedIndex === secondIndex ? 1 : 0 }" 
+                />
+                <component 
+                  :is="option.icon" 
+                  :size="16" 
+                  :stroke-width="1" 
+                  class="ml-1" 
+                  color="white" 
+                />
+                <div class="ml-3 text-white text-[13px]">
+                  {{ option.name }}
+                </div>
               </div>
             </div>
           </template>
         </Popover>
       </div>
     </div>
-    <div 
-      class="icon-container" 
-      :class="{ cur: tool === 'creation' }"
-      @click="setTool('creation')"
-    >
-      <PenTool :size="20" :stroke-width="1" :color="tool === 'creation' ? 'white' : 'black'" />
-    </div>
-    <div 
-      class="icon-container" 
-      :class="{ cur: tool === 'text' }"
-      @click="setTool('text')"
-    >
-      <Type :size="20" :stroke-width="1" :color="tool === 'text' ? 'white' : 'black'" />
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Square, MousePointer2, ChevronDown, Slash, Circle, Triangle, Image, Check, PenTool, Type } from 'lucide-vue-next'
+import { Square, MousePointer2, ChevronDown, Slash, Circle, Triangle, Check, PenTool, Type, Hand, Pencil } from 'lucide-vue-next'
 import Popover from '@/components/Popover.vue'
-import { selectedShapeRefType } from '@/types/type'
+import { OptionType } from '@/types/type'
 
 const props = defineProps<{
-  selectedShapeRef: selectedShapeRefType,
-  setSelectedShapeRef: (shape: selectedShapeRefType) => void
+  selectedToolRef: OptionType,
+  setSelectedToolRef: (shape: OptionType) => void
 }>()
 
-type Tool = 'move' | 'shape' | 'creation' | 'text'
+const popoverRefs = ref<InstanceType<typeof Popover>[]>([])
+const curGroupIndex = ref<number>(1)
 
-// 获取 Popover 组件的引用
-const popoverRef = ref<InstanceType<typeof Popover> | null>(null)
-const tool = ref<Tool>('shape')
-const shapeToolItems: {
+type GroupName = 'move' | 'shape' | 'creation' | 'text'
+
+interface Option {
   icon: any;
   name: string;
-  type: selectedShapeRefType;
-}[] = [
-  { icon: Square, name: 'Rectangle', type: 'rect' },
-  { icon: Slash, name: 'Line', type: 'line' },
-  { icon: Circle, name: 'Ellipse', type: 'ellipse' },
-  { icon: Triangle, name: 'Triangle', type: 'triangle' },
-]
-const shapeToolNameMap : {
-  [key in selectedShapeRefType]: any
-} = {
-  rect: Square,
-  line: Slash,
-  ellipse: Circle,
-  triangle: Triangle,
-  image: Image,
+  type: OptionType;
 }
 
-function setTool(newTool: Tool) {
-  tool.value = newTool;
+interface Group {
+  name: GroupName;
+  options: Option[];
+  selectedIndex: number;
 }
 
-function setShapeTool(newShapeTool: selectedShapeRefType) {
-  props.setSelectedShapeRef(newShapeTool)
-  // 调用暴露的 closePopover 函数
-  if (popoverRef.value) {
-    console.log(popoverRef.value)
-    popoverRef.value.closePopover()
+const optionsRef = ref<Group[]>([
+  {
+    name: 'move',
+    selectedIndex: 0,
+    options: [
+      { icon: MousePointer2, name: 'Move', type: 'move' },
+      { icon: Hand, name: 'Hand tool', type: 'hand' },
+    ],
+  },
+  {
+    name: 'shape',
+    selectedIndex: 0,
+    options: [
+      { icon: Square, name: 'Rectangle', type: 'rect' },
+      { icon: Slash, name: 'Line', type: 'line' },
+      { icon: Circle, name: 'Ellipse', type: 'ellipse' },
+      { icon: Triangle, name: 'Triangle', type: 'triangle' },
+    ],
+  },
+  {
+    name: 'creation',
+    selectedIndex: 0,
+    options: [
+      { icon: PenTool, name: 'Pen', type: 'pen' },
+      { icon: Pencil, name: 'Pencil', type: 'pencil' },
+    ],
+  },
+  {
+    name: 'text',
+    selectedIndex: 0,
+    options: [
+      { icon: Type, name: 'Text', type: 'text' },
+    ],
+  },
+])
+
+function setGroup(index: number) {
+  curGroupIndex.value = index
+  props.setSelectedToolRef(optionsRef.value[index].options[optionsRef.value[index].selectedIndex].type)
+}
+
+function setTool(newTool: string, index: number, secondIndex: number) {
+  curGroupIndex.value = index
+  optionsRef.value[index].selectedIndex = secondIndex
+  props.setSelectedToolRef(newTool as OptionType)
+
+  if (popoverRefs.value[index]) {
+    popoverRefs.value[index].closePopover()
   }
-  setTool('shape')
+}
+
+function closeOtherPopovers(index: number) {
+  popoverRefs.value.forEach((popover, i) => {
+    if (i !== index) {
+      popover.closePopover()
+    }
+  })
 }
 </script>
 
@@ -118,7 +157,6 @@ function setShapeTool(newShapeTool: selectedShapeRefType) {
   transform: translateX(-50%);
   border: 1px solid #ddd;
   border-radius: 10px;
-  // 阴影
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
   padding: 5px;
 }
@@ -148,7 +186,7 @@ function setShapeTool(newShapeTool: selectedShapeRefType) {
   }
 }
 
-.cur {
+.selected-group {
   background-color: #0d99ff;
   &:hover {
     background-color: #0d99ff;
@@ -164,6 +202,4 @@ function setShapeTool(newShapeTool: selectedShapeRefType) {
     background-color: #0d99ff;
   }
 }
-
 </style>
-

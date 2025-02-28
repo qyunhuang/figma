@@ -3,7 +3,7 @@
     <LeftSideBar />
     <CanvasContainer :onMounted="handleCanvasMounted" />
     <RightSideBar />
-    <ToolBelt :selectedShapeRef="selectedShapeRef" :setSelectedShapeRef="setSelectedShapeRef" />
+    <ToolBelt :selectedToolRef="selectedShapeRef" :setSelectedToolRef="setSelectedShapeRef" />
   </div>
 </template>
 
