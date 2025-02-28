@@ -53,6 +53,7 @@ export const handleMouseMoveDown = ({
     shapeRef.value = createSpecificShape(selectedShapeRef.value, pointer as any)
   
     if (shapeRef.value) {
+      shapeRef.value.set({ visible: false })
       canvas.add(shapeRef.value)
     }
   }
@@ -65,6 +66,9 @@ export const handleMouseMove = ({
   shapeRef,
 }: CanvasMouseDown) => {
   const pointer = canvas.getPointer(options.e)
+  if (shapeRef.value) {
+    shapeRef.value.set({ visible: true })
+  }
   switch (selectedShapeRef?.value) {
     case "rect":
       shapeRef.value?.set({
@@ -97,5 +101,8 @@ export const handleMouseMove = ({
 }
 
 export const handleMouseMoveUp = (shapeRef: Ref<fabric.Object | null>) => {
+  if (shapeRef.value) {
+    shapeRef.value.set({ visible: true })
+  }
   shapeRef.value = null
 }
