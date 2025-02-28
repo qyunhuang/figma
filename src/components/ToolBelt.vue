@@ -125,7 +125,8 @@ const optionsRef = ref<Group[]>([
 
 function setGroup(index: number) {
   curGroupIndex.value = index
-  props.setSelectedToolRef(optionsRef.value[index].options[optionsRef.value[index].selectedIndex].type)
+  const curGroup = optionsRef.value[index]
+  props.setSelectedToolRef(curGroup.options[curGroup.selectedIndex].type)
 }
 
 function setTool(newTool: string, index: number, secondIndex: number) {
@@ -145,6 +146,13 @@ function closeOtherPopovers(index: number) {
     }
   })
 }
+
+watch(() => props.selectedToolRef, (newVal) => {
+  const groupIndex = optionsRef.value.findIndex((group) => group.options.some((option) => option.type === newVal))
+  if (groupIndex !== -1) {
+    curGroupIndex.value = groupIndex
+  }
+})
 </script>
 
 <style lang="less" scoped>
