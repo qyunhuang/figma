@@ -1,6 +1,5 @@
 <template>
   <div class="content">
-    <img alt="Vue logo" :src="logo" />
     <p>This is a children router.</p>
     <router-link to="/">
       <span>Go Back</span>
@@ -9,7 +8,6 @@
 </template>
 
 <script setup lang="ts">
-import logo from '@/assets/img/logo.png'
 </script>
 
 <style lang="less" scoped>
