@@ -4,7 +4,7 @@
  * description: 
  * author: 
  */
-import{e as i,r as l,m as p}from"./lucide-vue-next-BVk8P4ok.js";/*!
+import{e as i,r as l,m as p}from"./lucide-vue-next-MQtFzFvt.js";/*!
  * pinia v2.3.1
  * (c) 2025 Eduardo San Martin Morote
  * @license MIT
