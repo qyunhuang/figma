@@ -10,13 +10,13 @@
     <div class="icon-group">
       <div 
         class="icon-container" 
-        :class="{ cur: tool === 'rectangle' }"
-        @click="setTool('rectangle')"
+        :class="{ cur: tool === 'shape' }"
+        @click="setTool('shape')"
       >
-        <Square :size="20" :stroke-width="1" :color="tool === 'rectangle' ? 'white' : 'black'" />
+        <component :is="shapeToolNameMap[shapeTool]" :size="20" :stroke-width="1" :color="tool === 'shape' ? 'white' : 'black'" />
       </div>
       <div>
-        <Popover>
+        <Popover ref="popoverRef">
           <template #trigger>
             <div
               class="select-container" 
@@ -27,28 +27,52 @@
           <template #content>
             <div class="bg-[#1e1e1e]">
               <div 
-                v-for="shapeTool in shapeTools" 
-                :key="shapeTool.name"
-                class="flex items-center"
+                v-for="shapeToolItem in shapeToolItems" 
+                :key="shapeToolItem.name"
+                class="shape-tool-item"
+                @click="setShapeTool(shapeToolItem.name)"
               >
-                <Check :size="12" :stroke-width="1" color="white" />
-                <component :is="shapeTool.icon" :size="16" :stroke-width="1" class="ml-1" color="white" />
-                <div class="ml-3 text-white text-[13px]">{{ shapeTool.name }}</div>
+                <Check :size="12" :stroke-width="1" color="white" :style="{opacity: shapeTool === shapeToolItem.name ? 1 : 0}" />
+                <component :is="shapeToolItem.icon" :size="16" :stroke-width="1" class="ml-1" color="white" />
+                <div class="ml-3 text-white text-[13px]">{{ shapeToolItem.name }}</div>
               </div>
             </div>
           </template>
         </Popover>
       </div>
     </div>
+    <div 
+      class="icon-container" 
+      :class="{ cur: tool === 'creation' }"
+      @click="setTool('creation')"
+    >
+      <PenTool :size="20" :stroke-width="1" :color="tool === 'creation' ? 'white' : 'black'" />
+    </div>
+    <div 
+      class="icon-container" 
+      :class="{ cur: tool === 'text' }"
+      @click="setTool('text')"
+    >
+      <Type :size="20" :stroke-width="1" :color="tool === 'text' ? 'white' : 'black'" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Square, MousePointer2, ChevronDown, Slash, MoveUpRight, Circle, Triangle, Image, Check } from 'lucide-vue-next'
+import { Square, MousePointer2, ChevronDown, Slash, MoveUpRight, Circle, Triangle, Image, Check, PenTool, Type } from 'lucide-vue-next'
 import Popover from '@/components/Popover.vue'
 
-const tool = ref<'move' | 'rectangle'>('rectangle')
-const shapeTools = [
+type Tool = 'move' | 'shape' | 'creation' | 'text'
+type ShapeTool = 'Rectangle' | 'Line' | 'Arrow' | 'Ellipse' | 'Polygon' | 'Image/video'
+
+// 获取 Popover 组件的引用
+const popoverRef = ref<InstanceType<typeof Popover> | null>(null)
+const tool = ref<Tool>('shape')
+const shapeTool = ref<ShapeTool>('Rectangle')
+const shapeToolItems: {
+  icon: any;
+  name: ShapeTool
+}[] = [
   { icon: Square, name: 'Rectangle' },
   { icon: Slash, name: 'Line' },
   { icon: MoveUpRight, name: 'Arrow' },
@@ -56,9 +80,27 @@ const shapeTools = [
   { icon: Triangle, name: 'Polygon' },
   { icon: Image, name: 'Image/video' },
 ]
+const shapeToolNameMap = {
+  Rectangle: Square,
+  Line: Slash,
+  Arrow: MoveUpRight,
+  Ellipse: Circle,
+  Polygon: Triangle,
+  'Image/video': Image,
+}
 
-function setTool(newTool: 'move' | 'rectangle') {
+function setTool(newTool: Tool) {
   tool.value = newTool;
+}
+
+function setShapeTool(newShapeTool: ShapeTool) {
+  shapeTool.value = newShapeTool
+  // 调用暴露的 closePopover 函数
+  if (popoverRef.value) {
+    console.log(popoverRef.value)
+    popoverRef.value.closePopover()
+  }
+  setTool('shape')
 }
 </script>
 
@@ -104,6 +146,16 @@ function setTool(newTool: 'move' | 'rectangle') {
 
 .cur {
   background-color: #0d99ff;
+  &:hover {
+    background-color: #0d99ff;
+  }
+}
+
+.shape-tool-item {
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  border-radius: 6px;
   &:hover {
     background-color: #0d99ff;
   }

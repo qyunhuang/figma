@@ -19,7 +19,16 @@ const popoverContent = ref<HTMLElement | null>(null)
 
 const togglePopover = () => {
   isOpen.value = !isOpen.value
-};
+}
+
+const closePopover = () => {
+  isOpen.value = false
+}
+
+// 向外部暴露 closePopover 函数
+defineExpose({
+  closePopover,
+})
 </script>
 
 <style lang="less" scoped>
