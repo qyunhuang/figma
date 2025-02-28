@@ -28,6 +28,8 @@ export const initializeFabric = ({
     width: canvasElement.clientWidth,
     height: canvasElement.clientHeight, 
     backgroundColor: '#f5f5f5', 
+    selectionBorderColor: '#0d99ff',
+    selectionColor: '#0d99ff22',
   })
 
   // 将 Fabric.js 画布实例赋值给 fabricRef
@@ -53,7 +55,14 @@ export const handleMouseMoveDown = ({
     shapeRef.value = createSpecificShape(selectedShapeRef.value, pointer as any)
   
     if (shapeRef.value) {
-      shapeRef.value.set({ visible: false })
+      shapeRef.value.set({ 
+        visible: false,
+        borderColor: '#0d99ff',
+        cornerStrokeColor:"#0d99ff",
+        cornerColor: 'white',
+        cornerSize: 8,
+        transparentCorners: false,
+      })
       canvas.add(shapeRef.value)
     }
   }

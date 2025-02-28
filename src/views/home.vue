@@ -18,6 +18,8 @@ const fabricRef = ref<fabric.Canvas | null>(null)
 const shapeRef = ref<fabric.Object | null>(null)
 const selectedToolRef = ref<OptionType>('rect')
 const startPointRef = ref<{ x: number; y: number } | null>(null)
+const isDraggingRef = ref<boolean>(false)
+const lastPositionRef = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 
 const setSelectedToolRef = (shape: OptionType) => {
   selectedToolRef.value = shape
@@ -31,17 +33,49 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   if (!canvas) return
 
   canvas.on('mouse:down', (options) => {
-    handleMouseMoveDown({ options, canvas, shapeRef, selectedShapeRef: selectedToolRef, startPointRef })
+    if (selectedToolRef.value === 'hand') {
+      isDraggingRef.value = true
+      canvas.selection = false
+      lastPositionRef.value = { x: options.e.clientX, y: options.e.clientY }
+    } else {
+      handleMouseMoveDown({ options, canvas, shapeRef, selectedShapeRef: selectedToolRef, startPointRef })
+    }
   })
 
   canvas.on('mouse:move', (options) => {
-    handleMouseMove({ options, canvas, shapeRef, selectedShapeRef: selectedToolRef, startPointRef })
+    if (isDraggingRef.value) {
+      const e = options.e
+      const vpt = canvas.viewportTransform
+      if (!vpt) return
+      vpt[4] += e.clientX - lastPositionRef.value.x
+      vpt[5] += e.clientY - lastPositionRef.value.y
+      lastPositionRef.value = { x: e.clientX, y: e.clientY }
+      canvas.requestRenderAll()
+    } else {
+      handleMouseMove({ options, canvas, shapeRef, selectedShapeRef: selectedToolRef, startPointRef })
+    }
   })
 
   canvas.on('mouse:up', () => {
+    isDraggingRef.value = false
+    canvas.selection = true
     handleMouseMoveUp(shapeRef)
     if (['rect', 'line', 'ellipse', 'triangle', 'text'].includes(selectedToolRef.value)) {
       selectedToolRef.value = 'move'
+    }
+  })
+
+  canvas.on('mouse:wheel', function (options) {
+    const delta = options.e.deltaY
+    const ctrlKey = options.e.ctrlKey
+    if (ctrlKey) {
+      let zoom = canvas.getZoom()
+      zoom *= 0.999 ** delta
+      if (zoom > 20) zoom = 20
+      if (zoom < 0.01) zoom = 0.01
+      canvas.setZoom(zoom)
+      options.e.preventDefault()
+      options.e.stopPropagation()
     }
   })
 }

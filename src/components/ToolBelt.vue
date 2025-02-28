@@ -151,6 +151,11 @@ watch(() => props.selectedToolRef, (newVal) => {
   const groupIndex = optionsRef.value.findIndex((group) => group.options.some((option) => option.type === newVal))
   if (groupIndex !== -1) {
     curGroupIndex.value = groupIndex
+    const optionIndex = optionsRef.value[groupIndex].selectedIndex
+    const curOptionIndex = optionsRef.value[groupIndex].options.findIndex((option) => option.type === newVal)
+    if (optionIndex !== curOptionIndex) {
+      optionsRef.value[groupIndex].selectedIndex = curOptionIndex
+    }
   }
 })
 </script>
