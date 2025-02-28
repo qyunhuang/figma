@@ -25,6 +25,13 @@ const setSelectedToolRef = (shape: OptionType) => {
   selectedToolRef.value = shape
 }
 
+watch(() => selectedToolRef.value, (shape) => {
+  if (shape === 'pencil' && fabricRef.value) {
+    fabricRef.value.isDrawingMode = true;
+    fabricRef.value.freeDrawingBrush.width = 1;
+  }
+})
+
 // 定义回调函数，接收子组件的 canvasRef
 const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   canvasRef.value = ref

@@ -46,7 +46,6 @@ export const handleMouseMoveDown = ({
 } : CanvasMouseDown) => {
   const pointer = canvas.getPointer(options.e)
   const target = canvas.findTarget(options.e, false)
-  canvas.isDrawingMode = false
 
   if (target && target.type === selectedShapeRef.value) {
     canvas.setActiveObject(target)
@@ -74,6 +73,8 @@ export const handleMouseMove = ({
   selectedShapeRef,
   shapeRef,
 }: CanvasMouseDown) => {
+  if (selectedShapeRef.value === "pencil") return
+  canvas.isDrawingMode = false
   const pointer = canvas.getPointer(options.e)
   if (shapeRef.value) {
     shapeRef.value.set({ visible: true })
