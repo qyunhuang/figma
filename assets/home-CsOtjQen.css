@@ -1,0 +1,7 @@
+/**
+ * name: figma
+ * version: v0.0.0
+ * description: 
+ * author: 
+ */
+.popover-container[data-v-6ce73c40]{position:relative;display:inline-block}.popover-trigger[data-v-6ce73c40]{cursor:pointer}.popover-content[data-v-6ce73c40]{width:140px;position:absolute;bottom:50px;left:50%;transform:translate(-50%);padding:12px;border:1px solid #ccc;border-radius:10px;z-index:1000;background-color:#1e1e1e}.tool-belt[data-v-f39e5575]{display:flex;gap:5px;position:absolute;bottom:20px;left:50%;transform:translate(-50%);border:1px solid #ddd;border-radius:10px;box-shadow:0 0 8px #0003;padding:5px}.icon-group[data-v-f39e5575]{display:flex;gap:2px;align-items:center}.icon-container[data-v-f39e5575],.select-container[data-v-f39e5575]{display:flex;align-items:center;height:30px;padding:5px;border-radius:5px}.icon-container[data-v-f39e5575]:hover{background-color:#eee}.select-container[data-v-f39e5575]{padding:2px}.select-container[data-v-f39e5575]:hover{background-color:#eee}.selected-group[data-v-f39e5575],.selected-group[data-v-f39e5575]:hover{background-color:#0d99ff}.shape-tool-item[data-v-f39e5575]{display:flex;align-items:center;padding:2px 4px;border-radius:6px}.shape-tool-item[data-v-f39e5575]:hover{background-color:#0d99ff}.canvas-container[data-v-769c2f68]{width:calc(100% - 600px);height:100%;position:relative}.canvas[data-v-769c2f68]{position:absolute;top:0;left:0;width:100%;height:100%}.container[data-v-1a67b0cb]{position:relative;display:flex;max-width:100vw;width:100vw;height:100vh}
