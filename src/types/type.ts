@@ -1,6 +1,6 @@
 import { Ref } from 'vue'
 
-export type selectedShapeRefType = 'Rectangle' | 'Line' | 'Circle' | 'Triangle' | 'Image'
+export type selectedShapeRefType = 'rect' | 'line' | 'circle' | 'triangle' | 'image'
 
 export type CanvasMouseDown = {
   options: fabric.IEvent;

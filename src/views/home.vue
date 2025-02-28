@@ -9,14 +9,14 @@
 
 <script setup lang="ts">
 import { fabric } from 'fabric'
-import { initializeFabric, handleMouseMoveDown } from '@/lib/canvas'
+import { initializeFabric, handleMouseMoveDown, handleMouseMove, handleMouseMoveUp } from '@/lib/canvas'
 import CanvasContainer from '@/components/CanvasContainer.vue'
 import { selectedShapeRefType } from '@/types/type'
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const fabricRef = ref<fabric.Canvas | null>(null)
 const shapeRef = ref<fabric.Object | null>(null)
-const selectedShapeRef = ref<selectedShapeRefType>('Rectangle')
+const selectedShapeRef = ref<selectedShapeRefType>('rect')
 
 const setSelectedShapeRef = (shape: selectedShapeRefType) => {
   selectedShapeRef.value = shape
@@ -31,6 +31,14 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
 
   canvas.on('mouse:down', (options) => {
     handleMouseMoveDown({ options, canvas, shapeRef, selectedShapeRef })
+  })
+
+  canvas.on('mouse:move', (options) => {
+    handleMouseMove({ options, canvas, shapeRef, selectedShapeRef })
+  })
+
+  canvas.on('mouse:up', () => {
+    handleMouseMoveUp(shapeRef)
   })
 }
 

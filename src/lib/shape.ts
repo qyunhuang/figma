@@ -7,28 +7,23 @@ export const createSpecificShape = (
   pointer: PointerEvent
 ) => {
   switch (shapeType) {
-    case "Rectangle":
+    case "rect":
       return createRectangle(pointer)
-
-    case "Triangle":
+    case "triangle":
       return createTriangle(pointer)
-
-    case "Circle":
+    case "circle":
       return createCircle(pointer)
-
-    case "Line":
+    case "line":
       return createLine(pointer)
-
-    case "Text":
+    case "text":
       return createText(pointer, "Tap to Type")
-
     default:
       return null
   }
 }
 
 export const createRectangle = (pointer: PointerEvent) => {
-  const rect = new fabric.Rect({
+  return new fabric.Rect({
     left: pointer.x,
     top: pointer.y,
     width: 100,
@@ -36,8 +31,6 @@ export const createRectangle = (pointer: PointerEvent) => {
     fill: "#d9d9d9",
     objectId: uuidv4(),
   } as CustomFabricObject<fabric.Rect>)
-
-  return rect
 }
 
 export const createTriangle = (pointer: PointerEvent) => {

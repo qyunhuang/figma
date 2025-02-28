@@ -28,11 +28,11 @@
             <div class="bg-[#1e1e1e]">
               <div 
                 v-for="shapeToolItem in shapeToolItems" 
-                :key="shapeToolItem.name"
+                :key="shapeToolItem.type"
                 class="shape-tool-item"
-                @click="setShapeTool(shapeToolItem.name)"
+                @click="setShapeTool(shapeToolItem.type)"
               >
-                <Check :size="12" :stroke-width="1" color="white" :style="{opacity: selectedShapeRef as any === shapeToolItem.name ? 1 : 0}" />
+                <Check :size="12" :stroke-width="1" color="white" :style="{opacity: selectedShapeRef as any === shapeToolItem.type ? 1 : 0}" />
                 <component :is="shapeToolItem.icon" :size="16" :stroke-width="1" class="ml-1" color="white" />
                 <div class="ml-3 text-white text-[13px]">{{ shapeToolItem.name }}</div>
               </div>
@@ -75,22 +75,22 @@ const popoverRef = ref<InstanceType<typeof Popover> | null>(null)
 const tool = ref<Tool>('shape')
 const shapeToolItems: {
   icon: any;
-  name: selectedShapeRefType;
+  name: string;
+  type: selectedShapeRefType;
 }[] = [
-  { icon: Square, name: 'Rectangle' },
-  { icon: Slash, name: 'Line' },
-  { icon: Circle, name: 'Circle' },
-  { icon: Triangle, name: 'Triangle' },
-  { icon: Image, name: 'Image' },
+  { icon: Square, name: 'Rectangle', type: 'rect' },
+  { icon: Slash, name: 'Line', type: 'line' },
+  { icon: Circle, name: 'Circle', type: 'circle' },
+  { icon: Triangle, name: 'Triangle', type: 'triangle' },
 ]
 const shapeToolNameMap : {
   [key in selectedShapeRefType]: any
 } = {
-  Rectangle: Square,
-  Line: Slash,
-  Circle: Circle,
-  Triangle: Triangle,
-  Image: Image,
+  rect: Square,
+  line: Slash,
+  circle: Circle,
+  triangle: Triangle,
+  image: Image,
 }
 
 function setTool(newTool: Tool) {

@@ -43,14 +43,62 @@ export const handleMouseMoveDown = ({
   shapeRef,
 } : CanvasMouseDown) => {
   const pointer = canvas.getPointer(options.e)
-  // const target = canvas.findTarget(options.e, false)
+  const target = canvas.findTarget(options.e, false)
+  console.log(target, target?.type)
   canvas.isDrawingMode = false
-  console.log(selectedShapeRef)
 
-  shapeRef.value = createSpecificShape(selectedShapeRef.value, pointer as any)
-
-  if (shapeRef.value) {
-    canvas.add(shapeRef.value)
+  if (target && target.type === selectedShapeRef.value) {
+    canvas.setActiveObject(target)
+    target.setCoords()
+  } else {
+    shapeRef.value = createSpecificShape(selectedShapeRef.value, pointer as any)
+  
+    if (shapeRef.value) {
+      canvas.add(shapeRef.value)
+    }
   }
 }
 
+export const handleMouseMove = ({
+  options,
+  canvas,
+  selectedShapeRef,
+  shapeRef,
+}: CanvasMouseDown) => {
+  const pointer = canvas.getPointer(options.e)
+  switch (selectedShapeRef?.value) {
+    case "rect":
+      shapeRef.value?.set({
+        width: pointer.x - (shapeRef.value?.left || 0),
+        height: pointer.y - (shapeRef.value?.top || 0),
+      })
+      break
+    case "circle":
+        shapeRef.value?.set({
+          // @ts-ignore
+          radius: Math.abs(pointer.x - (shapeRef.value?.left || 0)) / 2,
+        })
+        break
+    case "triangle":
+      shapeRef.value?.set({
+        width: pointer.x - (shapeRef.value?.left || 0),
+        height: pointer.y - (shapeRef.value?.top || 0),
+      })
+      break
+    case "line":
+        shapeRef.value?.set({
+          // @ts-ignore
+          x2: pointer.x,
+          y2: pointer.y,
+        })
+        break
+    default:
+      break
+  }
+  canvas.renderAll()
+}
+
+export const handleMouseMoveUp = (shapeRef: Ref<fabric.Object | null>) => {
+  shapeRef.value = null
+
+}
