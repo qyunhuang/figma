@@ -1,5 +1,7 @@
-import { fabric } from 'fabric';
-import { Ref } from 'vue';
+import { fabric } from 'fabric'
+import { Ref } from 'vue'
+import { CanvasMouseDown } from '@/types/type'
+import { createSpecificShape } from './shape'
 
 export const initializeFabric = ({
   fabricRef,
@@ -32,4 +34,23 @@ export const initializeFabric = ({
   fabricRef.value = canvas
 
   return canvas
-};
+}
+
+export const handleMouseMoveDown = ({
+  options,
+  canvas,
+  selectedShapeRef,
+  shapeRef,
+} : CanvasMouseDown) => {
+  const pointer = canvas.getPointer(options.e)
+  // const target = canvas.findTarget(options.e, false)
+  canvas.isDrawingMode = false
+  console.log(selectedShapeRef)
+
+  shapeRef.value = createSpecificShape(selectedShapeRef.value, pointer as any)
+
+  if (shapeRef.value) {
+    canvas.add(shapeRef.value)
+  }
+}
+

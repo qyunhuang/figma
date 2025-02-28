@@ -13,7 +13,7 @@
         :class="{ cur: tool === 'shape' }"
         @click="setTool('shape')"
       >
-        <component :is="shapeToolNameMap[shapeTool]" :size="20" :stroke-width="1" :color="tool === 'shape' ? 'white' : 'black'" />
+        <component :is="shapeToolNameMap[selectedShapeRef]" :size="20" :stroke-width="1" :color="tool === 'shape' ? 'white' : 'black'" />
       </div>
       <div>
         <Popover ref="popoverRef">
@@ -32,7 +32,7 @@
                 class="shape-tool-item"
                 @click="setShapeTool(shapeToolItem.name)"
               >
-                <Check :size="12" :stroke-width="1" color="white" :style="{opacity: shapeTool === shapeToolItem.name ? 1 : 0}" />
+                <Check :size="12" :stroke-width="1" color="white" :style="{opacity: selectedShapeRef as any === shapeToolItem.name ? 1 : 0}" />
                 <component :is="shapeToolItem.icon" :size="16" :stroke-width="1" class="ml-1" color="white" />
                 <div class="ml-3 text-white text-[13px]">{{ shapeToolItem.name }}</div>
               </div>
@@ -59,42 +59,46 @@
 </template>
 
 <script setup lang="ts">
-import { Square, MousePointer2, ChevronDown, Slash, MoveUpRight, Circle, Triangle, Image, Check, PenTool, Type } from 'lucide-vue-next'
+import { Square, MousePointer2, ChevronDown, Slash, Circle, Triangle, Image, Check, PenTool, Type } from 'lucide-vue-next'
 import Popover from '@/components/Popover.vue'
+import { selectedShapeRefType } from '@/types/type'
+
+const props = defineProps<{
+  selectedShapeRef: selectedShapeRefType,
+  setSelectedShapeRef: (shape: selectedShapeRefType) => void
+}>()
 
 type Tool = 'move' | 'shape' | 'creation' | 'text'
-type ShapeTool = 'Rectangle' | 'Line' | 'Arrow' | 'Ellipse' | 'Polygon' | 'Image/video'
 
 // 获取 Popover 组件的引用
 const popoverRef = ref<InstanceType<typeof Popover> | null>(null)
 const tool = ref<Tool>('shape')
-const shapeTool = ref<ShapeTool>('Rectangle')
 const shapeToolItems: {
   icon: any;
-  name: ShapeTool
+  name: selectedShapeRefType;
 }[] = [
   { icon: Square, name: 'Rectangle' },
   { icon: Slash, name: 'Line' },
-  { icon: MoveUpRight, name: 'Arrow' },
-  { icon: Circle, name: 'Ellipse' },
-  { icon: Triangle, name: 'Polygon' },
-  { icon: Image, name: 'Image/video' },
+  { icon: Circle, name: 'Circle' },
+  { icon: Triangle, name: 'Triangle' },
+  { icon: Image, name: 'Image' },
 ]
-const shapeToolNameMap = {
+const shapeToolNameMap : {
+  [key in selectedShapeRefType]: any
+} = {
   Rectangle: Square,
   Line: Slash,
-  Arrow: MoveUpRight,
-  Ellipse: Circle,
-  Polygon: Triangle,
-  'Image/video': Image,
+  Circle: Circle,
+  Triangle: Triangle,
+  Image: Image,
 }
 
 function setTool(newTool: Tool) {
   tool.value = newTool;
 }
 
-function setShapeTool(newShapeTool: ShapeTool) {
-  shapeTool.value = newShapeTool
+function setShapeTool(newShapeTool: selectedShapeRefType) {
+  props.setSelectedShapeRef(newShapeTool)
   // 调用暴露的 closePopover 函数
   if (popoverRef.value) {
     console.log(popoverRef.value)
