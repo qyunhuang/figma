@@ -5,11 +5,14 @@ import components from 'unplugin-vue-components/vite'
 import unocss from 'unocss/vite'
 import banner from 'vite-plugin-banner'
 import { createHtmlPlugin } from 'vite-plugin-html'
-import { envDir, manualChunks } from './scripts/build'
+import { envDir } from './scripts/build'
 import path from 'node:path'
 import pkg from './package.json'
 import autoprefixer from 'autoprefixer'
 import tailwind from 'tailwindcss'
+
+const INVALID_CHAR_REGEX = /[\x00-\x1F\x7F<>*#"{}|^[\]`;?:&=+$,]/g
+const DRIVE_LETTER_REGEX = /^[a-z]:/i
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -47,30 +50,14 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          /**
-           * 如果要加密打包后的文件名，可以启用该项目
-           *
-           * @example
-           *
-           *  1. 先安装 md5 依赖 `npm i -D @withtypes/md5`
-           *  2. 导入本文件 `import md5 from '@withtypes/md5'`
-           *  3. 将函数里的 `${name}` 修改为 `${md5(name)}`
-           */
-          // chunkFileNames: ({ name }) => {
-          //   return `assets/${name}-[hash].js`
-          // },
-          // entryFileNames: ({ name }) => {
-          //   return `assets/${name}-[hash].js`
-          // },
-          // assetFileNames: ({ name }) => {
-          //   return `assets/${name}-[hash].[ext]`
-          // },
-
-          /**
-           * 打包优化，避免全部打包到一个很大的 Chunk 里
-           * @description 根据包名生成不同的 Chunk 文件，方便按需加载
-           */
-          manualChunks,
+          sanitizeFileName(name) {
+            const match = DRIVE_LETTER_REGEX.exec(name)
+            const driveLetter = match ? match[0] : ''
+            return (
+              driveLetter +
+              name.slice(driveLetter.length).replace(INVALID_CHAR_REGEX, "")
+            )
+          },
         },
       },
     },

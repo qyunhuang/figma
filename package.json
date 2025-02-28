@@ -22,7 +22,7 @@
     "backup": "git add . && git commit -m \"chore: backup\" && git push",
     "up": "npx npm-check-updates -u",
     "prepare": "husky install",
-    "deploy": "gh-pages -d dist"
+    "deploy": "vite --mode prod build && gh-pages -d dist"
   },
   "dependencies": {
     "@bassist/progress": "^0.2.2",
