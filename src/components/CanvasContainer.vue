@@ -18,7 +18,7 @@ onMounted(() => {
 
 <style lang="less" scoped>
 .canvas-container {
-  width: calc(100% - 300px * 2);
+  width: calc(100% - 250px * 2);
   height: 100%;
   position: relative;
 }

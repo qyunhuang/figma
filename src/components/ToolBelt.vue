@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
 import { Square, MousePointer2, ChevronDown, Slash, Circle, Triangle, Check, Type, Hand, Pencil } from 'lucide-vue-next'
-import Popover from '@/components/Popover.vue'
+import Popover from '@/components/ui/Popover.vue'
 import { OptionType } from '@/types/type'
 
 const props = defineProps<{
