@@ -9,7 +9,16 @@
 
 <script setup lang="ts">
 import { fabric } from 'fabric'
-import { initializeFabric, handleMouseMoveDown, handleMouseMove, handleMouseMoveUp, handleCanvasSelectionCreated } from '@/lib/canvas'
+import { 
+  initializeFabric, 
+  handleMouseMoveDown, 
+  handleMouseMove, 
+  handleMouseMoveUp, 
+  handleCanvasSelectionCreated, 
+  handleCanvasObjectMoving,
+  handleCanvasObjectScaling,
+  handleCanvasSelectionCleared,
+} from '@/lib/canvas'
 import CanvasContainer from '@/components/CanvasContainer.vue'
 import { OptionType, Attributes } from '@/types/type'
 
@@ -21,11 +30,11 @@ const startPointRef = ref<{ x: number; y: number } | null>(null)
 const isDraggingRef = ref<boolean>(false)
 const lastPositionRef = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const elAttrsRef = ref<Attributes>({
-  left: '0',
-  top: '0',
+  left: '',
+  top: '',
   width: '',
   height: '',
-  angle: '0',
+  angle: '',
   fill: '',
   stroke: '',
 })
@@ -73,7 +82,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
       canvas.selection = false
       lastPositionRef.value = { x: options.e.clientX, y: options.e.clientY }
     } else {
-      handleMouseMoveDown({ options, canvas, shapeRef, selectedShapeRef: selectedToolRef, startPointRef })
+      handleMouseMoveDown({ options, canvas, shapeRef, selectedToolRef, startPointRef })
     }
   })
 
@@ -87,7 +96,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
       lastPositionRef.value = { x: e.clientX, y: e.clientY }
       canvas.requestRenderAll()
     } else {
-      handleMouseMove({ options, canvas, shapeRef, selectedShapeRef: selectedToolRef, startPointRef })
+      handleMouseMove({ options, canvas, shapeRef, selectedToolRef, startPointRef })
     }
   })
 
@@ -118,6 +127,22 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   canvas.on('selection:created', (options) => {
     handleCanvasSelectionCreated({ options, setElAttrsRef })
   })
+
+  canvas.on('selection:updated', (options) => {
+    handleCanvasSelectionCreated({ options, setElAttrsRef })
+  })
+
+  canvas.on('selection:cleared', () => {
+    handleCanvasSelectionCleared({ setElAttrsRef })
+  })
+
+  canvas.on("object:moving", (options) => {
+    handleCanvasObjectMoving({ options, elAttrsRef, canvas, setElAttrsRef })
+  });
+
+  canvas.on("object:scaling", (options) => {
+    handleCanvasObjectScaling({ options, elAttrsRef, canvas, setElAttrsRef })
+  });
 }
 
 </script>

@@ -5,7 +5,7 @@ export type OptionType = 'move' | 'hand' | 'rect' | 'line' | 'ellipse' | 'triang
 export type CanvasMouseMoveDown = {
   options: fabric.IEvent;
   canvas: fabric.Canvas;
-  selectedShapeRef: any;
+  selectedToolRef: any;
   shapeRef: Ref<fabric.Object | null>;
   startPointRef: Ref<{ x: number; y: number } | null>;
 }
@@ -13,7 +13,7 @@ export type CanvasMouseMoveDown = {
 export type CanvasMouseMove = {
   options: fabric.IEvent;
   canvas: fabric.Canvas;
-  selectedShapeRef: any;
+  selectedToolRef: any;
   shapeRef: Ref<fabric.Object | null>;
   startPointRef: Ref<{ x: number; y: number } | null>;
 }
@@ -24,6 +24,24 @@ export type CanvasMouseMoveUp = {
 
 export type CanvasSelectionCreated = {
   options: fabric.IEvent;
+  setElAttrsRef: (attrs: Attributes) => void;
+}
+
+export type CanvasSelectionCleared  = {
+  setElAttrsRef: (attrs: Attributes) => void;
+}
+
+export type CanvasObjectMoving = {
+  options: fabric.IEvent;
+  canvas: fabric.Canvas;
+  elAttrsRef: Ref<Attributes>;
+  setElAttrsRef: (attrs: Attributes) => void;
+}
+
+export type CanvasObjectScaling = {
+  options: fabric.IEvent;
+  canvas: fabric.Canvas;
+  elAttrsRef: Ref<Attributes>;
   setElAttrsRef: (attrs: Attributes) => void;
 }
 

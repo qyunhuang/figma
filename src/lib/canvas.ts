@@ -1,7 +1,35 @@
 import { fabric } from 'fabric'
 import { Ref } from 'vue'
-import { CanvasMouseMoveDown, CanvasMouseMove, CanvasMouseMoveUp, CanvasSelectionCreated } from '@/types/type'
+import { 
+  CanvasMouseMoveDown, 
+  CanvasMouseMove, 
+  CanvasMouseMoveUp, 
+  CanvasSelectionCreated, 
+  CanvasObjectMoving,
+  CanvasObjectScaling, 
+  CanvasSelectionCleared,
+} from '@/types/type'
 import { createSpecificShape } from './shape'
+
+const mixedAttributes = {
+  left: 'Mixed',
+  top: 'Mixed',
+  width: 'Mixed',
+  height: 'Mixed',
+  angle: 'Mixed',
+  fill: 'Mixed',
+  stroke: 'Mixed',
+}
+
+const defaultAttributes = {
+  left: '',
+  top: '',
+  width: '',
+  height: '',
+  angle: '',
+  fill: '',
+  stroke: '',
+}
 
 export const initializeFabric = ({
   fabricRef,
@@ -41,18 +69,18 @@ export const initializeFabric = ({
 export const handleMouseMoveDown = ({
   options,
   canvas,
-  selectedShapeRef,
+  selectedToolRef,
   shapeRef,
 }: CanvasMouseMoveDown) => {
 
   const pointer = canvas.getPointer(options.e)
   const target = canvas.findTarget(options.e, false)
 
-  if (target && target.type === selectedShapeRef.value) {
+  if (target && target.type === selectedToolRef.value) {
     canvas.setActiveObject(target)
     target.setCoords()
   } else {
-    shapeRef.value = createSpecificShape(selectedShapeRef.value, pointer as any)
+    shapeRef.value = createSpecificShape(selectedToolRef.value, pointer as any)
 
     if (shapeRef.value) {
       shapeRef.value.set({
@@ -66,16 +94,16 @@ export const handleMouseMoveDown = ({
 export const handleMouseMove = ({
   options,
   canvas,
-  selectedShapeRef,
+  selectedToolRef,
   shapeRef,
 }: CanvasMouseMove) => {
-  if (selectedShapeRef.value === "pencil") return
+  if (selectedToolRef.value === "pencil") return
   canvas.isDrawingMode = false
   if (shapeRef.value) {
     shapeRef.value.set({ visible: true })
   }
   const pointer = canvas.getPointer(options.e)
-  switch (selectedShapeRef?.value) {
+  switch (selectedToolRef?.value) {
     case "rect":
       shapeRef.value?.set({
         width: pointer.x - (shapeRef.value?.left || 0),
@@ -139,6 +167,65 @@ export const handleCanvasSelectionCreated = ({
       angle: selectedEl.angle?.toFixed(0).toString() || '',
       fill: selectedEl.fill?.toString() || '',
       stroke: selectedEl.stroke?.toString() || '',
+    })
+  } else if (options.selected.length > 1) {
+    setElAttrsRef(mixedAttributes)
+  }
+}
+
+export const handleCanvasSelectionCleared = ({
+  setElAttrsRef
+}: CanvasSelectionCleared) => {
+  setElAttrsRef(defaultAttributes)
+}
+
+export const handleCanvasObjectMoving = ({
+  options,
+  canvas,
+  elAttrsRef,
+  setElAttrsRef,
+}: CanvasObjectMoving) => {
+  if (!options.target) return
+
+  const activeObjects = canvas.getActiveObjects()
+  if (activeObjects.length > 1) {
+    setElAttrsRef(mixedAttributes)
+    return
+  }
+
+  const target = options.target as fabric.Object
+  if (target) {
+    setElAttrsRef({
+      ...elAttrsRef.value,
+      left: target.left?.toFixed(0).toString() || '',
+      top: target.top?.toFixed(0).toString() || '',
+    })
+  }
+}
+
+export const handleCanvasObjectScaling = ({
+  options,
+  canvas,
+  elAttrsRef,
+  setElAttrsRef,
+}: CanvasObjectScaling) => {
+  if (!options.target) return
+  
+  const activeObjects = canvas.getActiveObjects()
+  if (activeObjects.length > 1) {
+    setElAttrsRef(mixedAttributes)
+    return
+  }
+
+  const scaledWidth = options.target?.scaleX ? options.target?.width! * options.target?.scaleX : options.target?.width
+  const scaledHeight = options.target?.scaleY ? options.target?.height! * options.target?.scaleY : options.target?.height
+
+  const target = options.target as fabric.Object
+  if (target) {
+    setElAttrsRef({
+      ...elAttrsRef.value,
+      width: scaledWidth?.toFixed(0).toString() || '',
+      height: scaledHeight?.toFixed(0).toString() || '',
     })
   }
 }
