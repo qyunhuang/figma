@@ -27,8 +27,8 @@ const setSelectedToolRef = (shape: OptionType) => {
 
 watch(() => selectedToolRef.value, (shape) => {
   if (shape === 'pencil' && fabricRef.value) {
-    fabricRef.value.isDrawingMode = true;
-    fabricRef.value.freeDrawingBrush.width = 1;
+    fabricRef.value.isDrawingMode = true
+    fabricRef.value.freeDrawingBrush.width = 1
   }
 })
 
@@ -37,6 +37,21 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   canvasRef.value = ref
 
   const canvas = initializeFabric({ canvasRef, fabricRef })
+
+  // 全局样式设置
+  fabric.Object.prototype.set({
+    borderColor: '#0d99ff',
+    cornerStrokeColor: '#0d99ff',
+    cornerColor: 'white',
+    cornerSize: 8,
+    transparentCorners: false,
+  });
+
+  // 移除旋转控制
+  const controls = fabric.Object.prototype.controls
+  const rotateControls = controls.mtr
+  rotateControls.visible = false
+
   if (!canvas) return
 
   canvas.on('mouse:down', (options) => {
@@ -66,7 +81,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   canvas.on('mouse:up', () => {
     isDraggingRef.value = false
     canvas.selection = true
-    handleMouseMoveUp(shapeRef)
+    handleMouseMoveUp({ shapeRef })
     if (['rect', 'line', 'ellipse', 'triangle', 'text'].includes(selectedToolRef.value)) {
       selectedToolRef.value = 'move'
     }

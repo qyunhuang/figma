@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { Square, MousePointer2, ChevronDown, Slash, Circle, Triangle, Check, PenTool, Type, Hand, Pencil } from 'lucide-vue-next'
+import { Square, MousePointer2, ChevronDown, Slash, Circle, Triangle, Check, Type, Hand, Pencil } from 'lucide-vue-next'
 import Popover from '@/components/Popover.vue'
 import { OptionType } from '@/types/type'
 
@@ -110,7 +110,6 @@ const optionsRef = ref<Group[]>([
     name: 'creation',
     selectedIndex: 0,
     options: [
-      { icon: PenTool, name: 'Pen', type: 'pen' },
       { icon: Pencil, name: 'Pencil', type: 'pencil' },
     ],
   },

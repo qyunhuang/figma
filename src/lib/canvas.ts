@@ -1,6 +1,6 @@
 import { fabric } from 'fabric'
 import { Ref } from 'vue'
-import { CanvasMouseDown } from '@/types/type'
+import { CanvasMouseMoveDown, CanvasMouseMove, CanvasMouseMoveUp } from '@/types/type'
 import { createSpecificShape } from './shape'
 
 export const initializeFabric = ({
@@ -43,7 +43,8 @@ export const handleMouseMoveDown = ({
   canvas,
   selectedShapeRef,
   shapeRef,
-} : CanvasMouseDown) => {
+} : CanvasMouseMoveDown) => {
+  
   const pointer = canvas.getPointer(options.e)
   const target = canvas.findTarget(options.e, false)
 
@@ -56,11 +57,6 @@ export const handleMouseMoveDown = ({
     if (shapeRef.value) {
       shapeRef.value.set({ 
         visible: false,
-        borderColor: '#0d99ff',
-        cornerStrokeColor:"#0d99ff",
-        cornerColor: 'white',
-        cornerSize: 8,
-        transparentCorners: false,
       })
       canvas.add(shapeRef.value)
     }
@@ -72,13 +68,13 @@ export const handleMouseMove = ({
   canvas,
   selectedShapeRef,
   shapeRef,
-}: CanvasMouseDown) => {
+}: CanvasMouseMove) => {
   if (selectedShapeRef.value === "pencil") return
   canvas.isDrawingMode = false
-  const pointer = canvas.getPointer(options.e)
   if (shapeRef.value) {
     shapeRef.value.set({ visible: true })
   }
+  const pointer = canvas.getPointer(options.e)
   switch (selectedShapeRef?.value) {
     case "rect":
       shapeRef.value?.set({
@@ -110,7 +106,9 @@ export const handleMouseMove = ({
   canvas.renderAll()
 }
 
-export const handleMouseMoveUp = (shapeRef: Ref<fabric.Object | null>) => {
+export const handleMouseMoveUp = ({
+  shapeRef,
+}: CanvasMouseMoveUp) => {
   if (shapeRef.value) {
     shapeRef.value.set({ visible: true })
   }
