@@ -2,16 +2,16 @@
   <div class="container">
     <LeftSideBar />
     <CanvasContainer :onMounted="handleCanvasMounted" />
-    <RightSideBar />
+    <RightSideBar :setElAttrsRef="setElAttrsRef" :elAttrsRef="elAttrsRef" />
     <ToolBelt :selectedToolRef="selectedToolRef" :setSelectedToolRef="setSelectedToolRef" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { fabric } from 'fabric'
-import { initializeFabric, handleMouseMoveDown, handleMouseMove, handleMouseMoveUp } from '@/lib/canvas'
+import { initializeFabric, handleMouseMoveDown, handleMouseMove, handleMouseMoveUp, handleCanvasSelectionCreated } from '@/lib/canvas'
 import CanvasContainer from '@/components/CanvasContainer.vue'
-import { OptionType } from '@/types/type'
+import { OptionType, Attributes } from '@/types/type'
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const fabricRef = ref<fabric.Canvas | null>(null)
@@ -20,9 +20,22 @@ const selectedToolRef = ref<OptionType>('rect')
 const startPointRef = ref<{ x: number; y: number } | null>(null)
 const isDraggingRef = ref<boolean>(false)
 const lastPositionRef = ref<{ x: number; y: number }>({ x: 0, y: 0 })
+const elAttrsRef = ref<Attributes>({
+  left: '0',
+  top: '0',
+  width: '',
+  height: '',
+  angle: '0',
+  fill: '',
+  stroke: '',
+})
 
 const setSelectedToolRef = (shape: OptionType) => {
   selectedToolRef.value = shape
+}
+
+const setElAttrsRef = (attrs: Attributes) => {
+  elAttrsRef.value = attrs
 }
 
 watch(() => selectedToolRef.value, (shape) => {
@@ -100,6 +113,10 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
       options.e.preventDefault()
       options.e.stopPropagation()
     }
+  })
+
+  canvas.on('selection:created', (options) => {
+    handleCanvasSelectionCreated({ options, setElAttrsRef })
   })
 }
 

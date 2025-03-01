@@ -11,21 +11,21 @@
       </div>
       <div class="pb-2 px-4 flex gap-2">
         <Input
-          v-model="inputValue"
           left-text="X"
           placeholder=""
+          :value="$props.elAttrsRef.left"
         />
         <Input
-          v-model="inputValue"
           left-text="Y"
           placeholder=""
+          :value="$props.elAttrsRef.top"
         />
       </div>
       <div class="pb-2 px-4 flex gap-2">
         <Input
-          v-model="inputValue"
-          left-text="X"
+          left-text=""
           placeholder=""
+          :value="$props.elAttrsRef.angle"
         >
           <template #left>
             <RotateCw :size="12" color="#ababab" />
@@ -39,14 +39,14 @@
       </div>
       <div class="pb-2 px-4 flex gap-2">
         <Input
-          v-model="inputValue"
           left-text="W"
           placeholder=""
+          :value="$props.elAttrsRef.width"
         />
         <Input
-          v-model="inputValue"
           left-text="H"
           placeholder=""
+          :value="$props.elAttrsRef.height"
         />
       </div>
     </div>
@@ -56,8 +56,13 @@
 <script setup lang="ts">
 import Input from '@/components/ui/Input.vue'
 import { RotateCw } from 'lucide-vue-next'
+import { Attributes } from '@/types/type'
 
-const inputValue = ref('300');
+defineProps<{
+  elAttrsRef: Attributes;
+  setElAttrsRef: (attrs: Attributes) => void;
+}>();
+
 </script>
 
 <style lang="less" scoped>

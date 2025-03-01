@@ -1,6 +1,6 @@
 import { fabric } from 'fabric'
 import { Ref } from 'vue'
-import { CanvasMouseMoveDown, CanvasMouseMove, CanvasMouseMoveUp } from '@/types/type'
+import { CanvasMouseMoveDown, CanvasMouseMove, CanvasMouseMoveUp, CanvasSelectionCreated } from '@/types/type'
 import { createSpecificShape } from './shape'
 
 export const initializeFabric = ({
@@ -26,8 +26,8 @@ export const initializeFabric = ({
   // 初始化 Fabric.js 画布
   const canvas = new fabric.Canvas(canvasRef.value, {
     width: canvasElement.clientWidth,
-    height: canvasElement.clientHeight, 
-    backgroundColor: '#f5f5f5', 
+    height: canvasElement.clientHeight,
+    backgroundColor: '#f5f5f5',
     selectionBorderColor: '#0d99ff',
     selectionColor: '#0d99ff22',
   })
@@ -43,8 +43,8 @@ export const handleMouseMoveDown = ({
   canvas,
   selectedShapeRef,
   shapeRef,
-} : CanvasMouseMoveDown) => {
-  
+}: CanvasMouseMoveDown) => {
+
   const pointer = canvas.getPointer(options.e)
   const target = canvas.findTarget(options.e, false)
 
@@ -53,9 +53,9 @@ export const handleMouseMoveDown = ({
     target.setCoords()
   } else {
     shapeRef.value = createSpecificShape(selectedShapeRef.value, pointer as any)
-  
+
     if (shapeRef.value) {
-      shapeRef.value.set({ 
+      shapeRef.value.set({
         visible: false,
       })
       canvas.add(shapeRef.value)
@@ -83,11 +83,11 @@ export const handleMouseMove = ({
       })
       break
     case "ellipse":
-        (shapeRef.value as fabric.Ellipse)?.set({
-          rx: Math.abs(pointer.x - (shapeRef.value?.left || 0)) / 2,
-          ry: Math.abs(pointer.y - (shapeRef.value?.top || 0)) / 2,
-        })
-        break
+      (shapeRef.value as fabric.Ellipse)?.set({
+        rx: Math.abs(pointer.x - (shapeRef.value?.left || 0)) / 2,
+        ry: Math.abs(pointer.y - (shapeRef.value?.top || 0)) / 2,
+      })
+      break
     case "triangle":
       shapeRef.value?.set({
         width: pointer.x - (shapeRef.value?.left || 0),
@@ -95,11 +95,11 @@ export const handleMouseMove = ({
       })
       break
     case "line":
-        (shapeRef.value as fabric.Line)?.set({
-          x2: pointer.x,
-          y2: pointer.y,
-        })
-        break
+      (shapeRef.value as fabric.Line)?.set({
+        x2: pointer.x,
+        y2: pointer.y,
+      })
+      break
     default:
       break
   }
@@ -113,4 +113,32 @@ export const handleMouseMoveUp = ({
     shapeRef.value.set({ visible: true })
   }
   shapeRef.value = null
+}
+
+export const handleCanvasSelectionCreated = ({
+  options,
+  setElAttrsRef,
+}: CanvasSelectionCreated) => {
+  if (!options?.selected) return
+
+  const selectedEl = options?.selected[0] as fabric.Object
+  if (selectedEl && options.selected.length === 1) {
+    const scaledWidth = selectedEl?.scaleX
+      ? selectedEl?.width! * selectedEl?.scaleX
+      : selectedEl?.width;
+
+    const scaledHeight = selectedEl?.scaleY
+      ? selectedEl?.height! * selectedEl?.scaleY
+      : selectedEl?.height;
+
+    setElAttrsRef({
+      left: selectedEl.left?.toFixed(0).toString() || '',
+      top: selectedEl.top?.toFixed(0).toString() || '',
+      width: scaledWidth?.toFixed(0).toString() || '',
+      height: scaledHeight?.toFixed(0).toString() || '',
+      angle: selectedEl.angle?.toFixed(0).toString() || '',
+      fill: selectedEl.fill?.toString() || '',
+      stroke: selectedEl.stroke?.toString() || '',
+    })
+  }
 }

@@ -22,7 +22,22 @@ export type CanvasMouseMoveUp = {
   shapeRef: Ref<fabric.Object | null>;
 }
 
+export type CanvasSelectionCreated = {
+  options: fabric.IEvent;
+  setElAttrsRef: (attrs: Attributes) => void;
+}
+
 export interface CustomFabricObject<T extends fabric.Object>
   extends fabric.Object {
   objectId?: string;
+}
+
+export type Attributes = {
+  left: string;
+  top: string;
+  width: string;
+  height: string;
+  angle: string;
+  fill: string;
+  stroke: string;
 }

@@ -19,21 +19,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-// 定义 props
-const props = defineProps({
-  leftText: {
-    type: String,
-    default: '',
-  },
-  placeholder: {
-    type: String,
-    default: '',
-  },
-  value: {
-    type: String,
-    default: '300',
-  },
-});
+const props = defineProps<{
+  value: string;
+  leftText: string;
+  placeholder: string;
+}>();
 
 // 定义 emits
 const emit = defineEmits(['input']);
