@@ -70,9 +70,9 @@ export const createText = (pointer: PointerEvent, text: string) => {
   return new fabric.IText(text, {
     left: pointer.x,
     top: pointer.y,
-    fill: "#d9d9d9",
+    fill: "black",
     fontFamily: "Helvetica",
-    fontSize: 36,
+    fontSize: 16,
     fontWeight: "400",
     objectId: uuidv4()
   } as fabric.ITextOptions)

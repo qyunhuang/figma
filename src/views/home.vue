@@ -95,7 +95,8 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
       zoom *= 0.999 ** delta
       if (zoom > 20) zoom = 20
       if (zoom < 0.01) zoom = 0.01
-      canvas.setZoom(zoom)
+      const pointer = canvas.getPointer(options.e)
+      canvas.zoomToPoint({ x: pointer.x, y: pointer.y }, zoom)
       options.e.preventDefault()
       options.e.stopPropagation()
     }
