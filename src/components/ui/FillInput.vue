@@ -131,7 +131,7 @@ const handleRightEnter = () => {
   background-color: #f5f5f5;
   border: none;
   outline: none;
-  width: 65%;
+  width: 60%;
   &::selection {
     background-color: #0d99ff55;
     color: #000;
@@ -143,7 +143,7 @@ const handleRightEnter = () => {
   background-color: #f5f5f5;
   border: none;
   outline: none;
-  width: 25%;
+  width: 30%;
   &::selection {
     background-color: #0d99ff55;
     color: #000;

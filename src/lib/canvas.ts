@@ -20,6 +20,7 @@ const mixedAttributes = {
   fill: 'Mixed',
   opacity: 'Mixed',
   stroke: 'Mixed',
+  strokeWidth: 'Mixed',
 }
 
 const defaultAttributes = {
@@ -31,6 +32,7 @@ const defaultAttributes = {
   fill: '',
   opacity: '',
   stroke: '',
+  strokeWidth: '',
 }
 
 export const initializeFabric = ({
@@ -168,6 +170,7 @@ export const handleCanvasSelectionCreated = ({
       fill: selectedEl.fill?.toString() || '',
       opacity: selectedEl.opacity?.toString() || '',
       stroke: selectedEl.stroke?.toString() || '',
+      strokeWidth: selectedEl.strokeWidth?.toString() || '',
     })
   } else if (options.selected.length > 1) {
     setElAttrsRef(mixedAttributes)

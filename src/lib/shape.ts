@@ -95,11 +95,13 @@ export const toHexString = (color: string) => {
 
 export const toUpperCaseString = (color: string) => {
   if (!color) return ''
+  if (color === 'Mixed') return color
   return chroma(color).hex().toUpperCase().slice(1)
 }
 
 export const toPercentage = (value: string) => {
   if (!value) return ''
+  if (value === 'Mixed') return value
   return '' + (+value) * 100
 }
 

@@ -59,6 +59,7 @@ export type Attributes = {
   fill: string;
   opacity: string;
   stroke: string;
+  strokeWidth: string;
 }
 
 export type ModifyShape = {
