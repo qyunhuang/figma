@@ -18,6 +18,7 @@ const mixedAttributes = {
   height: 'Mixed',
   angle: 'Mixed',
   fill: 'Mixed',
+  opacity: 'Mixed',
   stroke: 'Mixed',
 }
 
@@ -28,6 +29,7 @@ const defaultAttributes = {
   height: '',
   angle: '',
   fill: '',
+  opacity: '',
   stroke: '',
 }
 
@@ -72,7 +74,6 @@ export const handleMouseMoveDown = ({
   selectedToolRef,
   shapeRef,
 }: CanvasMouseMoveDown) => {
-
   const pointer = canvas.getPointer(options.e)
   const target = canvas.findTarget(options.e, false)
 
@@ -81,7 +82,6 @@ export const handleMouseMoveDown = ({
     target.setCoords()
   } else {
     shapeRef.value = createSpecificShape(selectedToolRef.value, pointer as any)
-
     if (shapeRef.value) {
       shapeRef.value.set({
         visible: false,
@@ -166,6 +166,7 @@ export const handleCanvasSelectionCreated = ({
       height: scaledHeight?.toFixed(0).toString() || '',
       angle: selectedEl.angle?.toFixed(0).toString() || '',
       fill: selectedEl.fill?.toString() || '',
+      opacity: selectedEl.opacity?.toString() || '',
       stroke: selectedEl.stroke?.toString() || '',
     })
   } else if (options.selected.length > 1) {

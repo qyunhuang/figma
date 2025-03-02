@@ -57,5 +57,6 @@ export type Attributes = {
   height: string;
   angle: string;
   fill: string;
+  opacity: string;
   stroke: string;
 }
