@@ -60,3 +60,9 @@ export type Attributes = {
   opacity: string;
   stroke: string;
 }
+
+export type ModifyShape = {
+  canvas: fabric.Canvas | null;
+  property: string;
+  value: any;
+}

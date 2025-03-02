@@ -2,7 +2,7 @@
   <div class="container">
     <LeftSideBar />
     <CanvasContainer :onMounted="handleCanvasMounted" />
-    <RightSideBar :setElAttrsRef="setElAttrsRef" :elAttrsRef="elAttrsRef" />
+    <RightSideBar :fabric-ref="fabricRef" :setElAttrsRef="setElAttrsRef" :elAttrsRef="elAttrsRef" />
     <ToolBelt :selectedToolRef="selectedToolRef" :setSelectedToolRef="setSelectedToolRef" />
   </div>
 </template>
@@ -36,6 +36,7 @@ const elAttrsRef = ref<Attributes>({
   height: '',
   angle: '',
   fill: '',
+  opacity: '',
   stroke: '',
 })
 

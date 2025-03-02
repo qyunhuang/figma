@@ -1,6 +1,6 @@
 import { fabric } from "fabric"
 import { v4 as uuidv4 } from "uuid"
-import { CustomFabricObject } from "@/types/type"
+import { CustomFabricObject, ModifyShape } from "@/types/type"
 
 export const createSpecificShape = (
   shapeType: string,
@@ -76,4 +76,38 @@ export const createText = (pointer: PointerEvent, text: string) => {
     fontWeight: "400",
     objectId: uuidv4()
   } as fabric.ITextOptions)
+}
+
+const formatPropertyVlaue = (property: string, value: any) => {
+  if (property === 'fill' || property === 'stroke') {
+    return value
+  } else {
+    return parseInt(value)
+  }
+}
+
+export const modifyShape = ({
+  canvas,
+  property,
+  value,
+}: ModifyShape) => {
+  if (!canvas) return
+  const selectedElement = canvas.getActiveObject()
+  console.log(selectedElement)
+
+  if (!selectedElement || selectedElement?.type === "activeSelection") return
+
+  value = formatPropertyVlaue(property, value)
+
+  if (property === "width") {
+    selectedElement.set("scaleX", 1)
+    selectedElement.set("width", value); 
+  } else if (property === "height") {
+    selectedElement.set("scaleY", 1)
+    selectedElement.set("height", value)
+  } else {
+    if (selectedElement[property as keyof object] === value) return
+    selectedElement.set(property as keyof object, value)
+    console.log(selectedElement)
+  }
 }

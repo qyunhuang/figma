@@ -40,21 +40,21 @@ const emit = defineEmits(['leftInput', 'rightInput']);
 
 const inputLeftValue = computed({
   get() {
-    return props.leftValue;
+    return props.leftValue
   },
   set(newValue: string) {
-    emit('leftInput', newValue);
+    emit('leftInput', newValue)
   },
-});
+})
 
 const inputRightValue = computed({
   get() {
-    return props.rightValue;
+    return props.rightValue
   },
   set(newValue: string) {
-    emit('leftInput', newValue);
+    emit('leftInput', newValue)
   },
-});
+})
 </script>
 
 <style lang="less" scoped>
@@ -85,6 +85,7 @@ const inputRightValue = computed({
   font-size: 12px;
   color: #ababab;
   width: 23px;
+  padding-left: 4px;
 }
 
 .right-slot {

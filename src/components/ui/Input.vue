@@ -23,18 +23,19 @@ const props = defineProps<{
   value: string;
   leftText: string;
   placeholder: string;
+  handleChange: (value: string) => void;
 }>();
 
-// 定义 emits
 const emit = defineEmits(['input']);
 
-// 计算属性，用于双向绑定
 const inputValue = computed({
   get() {
-    return props.value;
+    return props.value
   },
   set(newValue: string) {
-    emit('input', newValue);
+    console.log(newValue)
+    props.handleChange(newValue)
+    emit('input', newValue)
   },
 });
 </script>
