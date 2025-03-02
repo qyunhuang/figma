@@ -1,6 +1,7 @@
 import { fabric } from "fabric"
 import { v4 as uuidv4 } from "uuid"
 import { CustomFabricObject, ModifyShape } from "@/types/type"
+import chroma from 'chroma-js'
 
 export const createSpecificShape = (
   shapeType: string,
@@ -81,9 +82,29 @@ export const createText = (pointer: PointerEvent, text: string) => {
 const formatPropertyVlaue = (property: string, value: any) => {
   if (property === 'fill' || property === 'stroke') {
     return value
+  } else if (property === 'opacity') {
+    return parseFloat(value)
   } else {
     return parseInt(value)
   }
+}
+
+export const toHexString = (color: string) => {
+  return chroma(color).hex()
+}
+
+export const toUpperCaseString = (color: string) => {
+  if (!color) return ''
+  return chroma(color).hex().toUpperCase().slice(1)
+}
+
+export const toPercentage = (value: string) => {
+  if (!value) return ''
+  return '' + (+value) * 100
+}
+
+export const toDecimal = (value: string) => {
+  return '' + (+value) / 100
 }
 
 export const modifyShape = ({
@@ -93,7 +114,6 @@ export const modifyShape = ({
 }: ModifyShape) => {
   if (!canvas) return
   const selectedElement = canvas.getActiveObject()
-  console.log(selectedElement)
 
   if (!selectedElement || selectedElement?.type === "activeSelection") return
 

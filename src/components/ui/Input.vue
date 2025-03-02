@@ -3,41 +3,51 @@
     <div class="input-container">
       <div class="left-slot">
         <slot name="left">
-          <!-- 默认内容，如果没有提供插槽内容则显示 -->
           <span>{{ leftText }}</span>
         </slot>
       </div>
       <input
+        ref="inputRef"
         v-model="inputValue"
-        :placeholder="placeholder"
         class="input-field"
+        @blur="handleConfirm"
+        @keydown.enter="handleEnter"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
 const props = defineProps<{
   value: string;
   leftText: string;
-  placeholder: string;
   handleChange: (value: string) => void;
 }>();
 
-const emit = defineEmits(['input']);
+const emit = defineEmits(['input'])
 
-const inputValue = computed({
-  get() {
-    return props.value
-  },
-  set(newValue: string) {
-    console.log(newValue)
-    props.handleChange(newValue)
-    emit('input', newValue)
-  },
-});
+const inputRef = ref<HTMLInputElement | null>(null)
+
+const inputValue = ref(props.value)
+
+watch(
+  () => props.value,
+  (newValue) => {
+    inputValue.value = newValue
+  }
+);
+
+const handleConfirm = () => {
+  props.handleChange(inputValue.value)
+  emit('input', inputValue.value)
+}
+
+const handleEnter = () => {
+  handleConfirm()
+  if (inputRef.value) {
+    inputRef.value.blur()
+  }
+};
 </script>
 
 <style lang="less" scoped>

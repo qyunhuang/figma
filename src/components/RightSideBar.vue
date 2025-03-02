@@ -12,13 +12,11 @@
       <div class="pb-2 px-4 flex gap-2">
         <Input
           left-text="X"
-          placeholder=""
           :value="$props.elAttrsRef.left"
           :handle-change="handleChangeLeft"
         />
         <Input
           left-text="Y"
-          placeholder=""
           :value="$props.elAttrsRef.top"
           :handle-change="handleChangeTop"
         />
@@ -26,7 +24,6 @@
       <div class="pb-2 px-4 flex gap-2">
         <Input
           left-text=""
-          placeholder=""
           :value="$props.elAttrsRef.angle"
           :handle-change="handleChangeAngle"
         >
@@ -43,13 +40,11 @@
       <div class="pb-2 px-4 flex gap-2">
         <Input
           left-text="W"
-          placeholder=""
           :value="$props.elAttrsRef.width"
           :handle-change="handleChangeWidth"
         />
         <Input
           left-text="H"
-          placeholder=""
           :value="$props.elAttrsRef.height"
           :handle-change="handleChangeHeight"
         />
@@ -60,17 +55,18 @@
         Fill
       </div>
       <div class="pb-2 px-4 flex gap-2">
-        <MultiInput
+        <FillInput
           left-text=""
           right-text="%"
-          placeholder=""
           :left-value="$props.elAttrsRef.fill"
-          right-value="100"
+          :right-value="$props.elAttrsRef.opacity"
+          :handle-left-change="handleChangeFill"
+          :handle-right-change="handleChangeOpacity"
         >
           <template #left>
             <Square :size="12" color="#ababab" fill="#ababab" />
           </template>
-        </MultiInput>
+        </FillInput>
       </div>
     </div>
   </div>
@@ -78,7 +74,7 @@
 
 <script setup lang="ts">
 import Input from '@/components/ui/Input.vue'
-import MultiInput from '@/components/ui/MultiInput.vue'
+import FillInput from '@/components/ui/FillInput.vue'
 import { RotateCw, Square } from 'lucide-vue-next'
 import { Attributes } from '@/types/type'
 import { modifyShape } from '@/lib/shape'
@@ -112,6 +108,16 @@ const handleChangeHeight = (value: string) => {
 const handleChangeAngle = (value: string) => {
   props.setElAttrsRef({ ...props.elAttrsRef, angle: value })
   modifyShape({ canvas: props.fabricRef, property: 'angle', value })
+}
+
+const handleChangeFill = (value: string) => {
+  props.setElAttrsRef({ ...props.elAttrsRef, fill: value })
+  modifyShape({ canvas: props.fabricRef, property: 'fill', value })
+}
+
+const handleChangeOpacity = (value: string) => {
+  props.setElAttrsRef({ ...props.elAttrsRef, opacity: value })
+  modifyShape({ canvas: props.fabricRef, property: 'opacity', value })
 }
 
 </script>

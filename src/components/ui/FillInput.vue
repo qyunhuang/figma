@@ -7,14 +7,18 @@
         </slot>
       </div>
       <input
+        ref="leftInputRef"
         v-model="inputLeftValue"
-        :placeholder="placeholder"
         class="left-input-field"
+        @blur="handleLeftConfirm"
+        @keydown.enter="handleLeftEnter"
       />
       <input
+        ref="rightInputRef"
         v-model="inputRightValue"
-        :placeholder="placeholder"
         class="right-input-field"
+        @blur="handleRightConfirm"
+        @keydown.enter="handleRightEnter"
       />
       <div class="right-slot">
         <slot name="right">
@@ -26,35 +30,62 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { toHexString, toUpperCaseString, toPercentage, toDecimal } from '@/lib/shape';
 
 const props = defineProps<{
   leftValue: string;
   rightValue: string;
   leftText: string;
   rightText: string;
-  placeholder: string;
+  handleLeftChange: (value: string) => void;
+  handleRightChange: (value: string) => void;
 }>();
 
 const emit = defineEmits(['leftInput', 'rightInput']);
 
-const inputLeftValue = computed({
-  get() {
-    return props.leftValue
-  },
-  set(newValue: string) {
-    emit('leftInput', newValue)
-  },
-})
+const leftInputRef = ref<HTMLInputElement | null>(null)
+const rightInputRef = ref<HTMLInputElement | null>(null)
 
-const inputRightValue = computed({
-  get() {
-    return props.rightValue
-  },
-  set(newValue: string) {
-    emit('leftInput', newValue)
-  },
-})
+const inputLeftValue = ref(props.leftValue)
+const inputRightValue = ref(props.rightValue)
+
+watch(
+  () => props.leftValue,
+  (newValue) => {
+    inputLeftValue.value = toUpperCaseString(newValue)
+  }
+)
+
+watch(
+  () => props.rightValue,
+  (newValue) => {
+    inputRightValue.value = toPercentage(newValue)
+  }
+)
+
+const handleLeftConfirm = () => {
+  props.handleLeftChange(toHexString(inputLeftValue.value))
+  emit('leftInput', toHexString(inputLeftValue.value))
+}
+
+const handleRightConfirm = () => {
+  props.handleRightChange(toDecimal(inputRightValue.value))
+  emit('rightInput', toDecimal(inputRightValue.value))
+}
+
+const handleLeftEnter = () => {
+  handleLeftConfirm()
+  if (leftInputRef.value) {
+    leftInputRef.value.blur()
+  }
+}
+
+const handleRightEnter = () => {
+  handleRightConfirm()
+  if (rightInputRef.value) {
+    rightInputRef.value.blur()
+  }
+}
 </script>
 
 <style lang="less" scoped>
