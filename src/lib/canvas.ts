@@ -290,7 +290,6 @@ export const handleCanvasObjectSelected = ({
 
   if (targetObjects.length === 0) {
     canvas.discardActiveObject()
-    canvas.renderAll()
   } else if (targetObjects.length === 1) {
     canvas.setActiveObject(targetObjects[0])
   } else if (targetObjects.length > 1) {
@@ -298,8 +297,8 @@ export const handleCanvasObjectSelected = ({
     canvas.setActiveObject(new fabric.ActiveSelection(targetObjects, {
       canvas: canvas,
     }))
-    canvas.renderAll()
   }
+  canvas.renderAll()
 
   isProgrammaticSelectionRef.value = false
 }
@@ -311,7 +310,9 @@ export const handleCanvasObjectDeleted = ({
   const activeObjects = canvas.getActiveObjects()
   if (activeObjects.length > 0) {
     activeObjects.forEach((obj) => {
+      // fix this
       canvas.remove(obj)
+      canvas.discardActiveObject()
       deleteShapeInStorage((obj as any)?.objectId)
     })
   }

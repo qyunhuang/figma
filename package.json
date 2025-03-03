@@ -31,6 +31,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "fabric": "^5.3.0",
+    "fabric-guideline-plugin": "^0.0.11",
+    "fabric-history": "^2.0.0",
     "lucide-vue-next": "^0.476.0",
     "pinia": "^2.1.7",
     "reka-ui": "^2.0.0",

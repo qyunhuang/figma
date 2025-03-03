@@ -2720,6 +2720,18 @@ execa@^8.0.1:
     signal-exit "^4.1.0"
     strip-final-newline "^3.0.0"
 
+fabric-guideline-plugin@^0.0.11:
+  version "0.0.11"
+  resolved "https://registry.npmmirror.com/fabric-guideline-plugin/-/fabric-guideline-plugin-0.0.11.tgz#bd42c5b5bec6c55efb1062da08df988be0497a8e"
+  integrity sha512-qeocIwDR8KHMQpGlVUZeiOlm1IyHpnCYNHt+nAUxcq3dckOuXA/40X3No5Haeoj49nsNWsmBUlMxffxjpTOsKQ==
+
+fabric-history@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmmirror.com/fabric-history/-/fabric-history-2.0.0.tgz#12f930bd0b2b356fe5af9c8cd14da98430bac4b4"
+  integrity sha512-wII0bUsuD34fFkwNa1N/ZQQHMeplB1+6u8OvrC7vOIqabaJRtKKDx3i7kPcmeAO7zJLGOZxRqVHXLYTnPR40Ow==
+  dependencies:
+    fabric "^5.3.0"
+
 fabric@^5.3.0:
   version "5.5.1"
   resolved "https://registry.npmmirror.com/fabric/-/fabric-5.5.1.tgz#ae072e490fd2db6105e9f9a86daa7c272668c690"

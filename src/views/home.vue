@@ -21,6 +21,7 @@
 
 <script setup lang="ts">
 import { fabric } from 'fabric'
+import { AlignGuidelines } from "fabric-guideline-plugin"
 import { 
   initializeFabric, 
   handleMouseMoveDown, 
@@ -118,6 +119,8 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
     cornerSize: 8,
     transparentCorners: false,
     strokeUniform: true,
+    borderOpacityWhenMoving: 0,
+    borderScaleFactor: 1.5,
   });
 
   // 移除旋转控制
@@ -133,6 +136,15 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
     const objectsData = Object.values(storedCanvasObjects)
     loadObjectsToCanvas(canvas, objectsData)
   }
+
+  const guideline = new AlignGuidelines({
+    canvas,
+    aligningOptions: {
+      lineWidth: 1.3,
+    },
+  })
+
+  guideline.init()
 
   canvas.on('mouse:down', (options) => {
     if (selectedToolRef.value === 'hand') {
