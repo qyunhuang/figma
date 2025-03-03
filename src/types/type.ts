@@ -64,6 +64,11 @@ export type CanvasObjectSelected = {
   isProgrammaticSelectionRef: Ref<boolean>;
 }
 
+export type CanvasObjectDeleted = {
+  canvas: fabric.Canvas;
+  deleteShapeInStorage: (ids: string) => void;
+}
+
 export interface CustomFabricObject<T extends fabric.Object>
   extends fabric.Object {
   objectId?: string;

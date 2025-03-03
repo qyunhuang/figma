@@ -33,6 +33,7 @@ import {
   handleCanvasPathCreated,
   handleCanvasObjectModified,
   handleCanvasObjectSelected,
+  handleCanvasObjectDeleted,
 } from '@/lib/canvas'
 import {  
   loadCanvasFromStorage,
@@ -93,6 +94,12 @@ const syncShapeInStorage = (object: fabric.Object) => {
 
   canvasObjects.value[objectId] = shapeData
 
+  localStorage.setItem('canvasObjects', JSON.stringify(canvasObjects.value))
+}
+
+const deleteShapeInStorage = (objectId: string) => {
+  if (!objectId) return
+  delete canvasObjects.value[objectId]
   localStorage.setItem('canvasObjects', JSON.stringify(canvasObjects.value))
 }
 
@@ -204,6 +211,12 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
 
   canvas.on("path:created", (options) => {
     handleCanvasPathCreated({ options, syncShapeInStorage })
+  })
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Delete") {
+      handleCanvasObjectDeleted({ canvas, deleteShapeInStorage })
+    }
   })
 }
 

@@ -11,6 +11,7 @@ import {
   CanvasPathCreated,
   CanvasObjectModified,
   CanvasObjectSelected,
+  CanvasObjectDeleted,
 } from '@/types/type'
 import { createSpecificShape } from './shape'
 import { v4 as uuid4 } from "uuid"
@@ -287,7 +288,6 @@ export const handleCanvasObjectSelected = ({
     (obj) => objectIds.includes((obj as any).objectId)
   )
 
-  console.log(targetObjects)
   if (targetObjects.length === 0) {
     canvas.discardActiveObject()
     canvas.renderAll()
@@ -302,4 +302,18 @@ export const handleCanvasObjectSelected = ({
   }
 
   isProgrammaticSelectionRef.value = false
+}
+
+export const handleCanvasObjectDeleted = ({
+  canvas,
+  deleteShapeInStorage,
+}: CanvasObjectDeleted) => {
+  const activeObjects = canvas.getActiveObjects()
+  if (activeObjects.length > 0) {
+    activeObjects.forEach((obj) => {
+      canvas.remove(obj)
+      deleteShapeInStorage((obj as any)?.objectId)
+    })
+  }
+  canvas.renderAll()
 }
