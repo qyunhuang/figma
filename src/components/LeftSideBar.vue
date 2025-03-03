@@ -69,7 +69,7 @@ const getShapeInfo = (shapeType: string) => {
         name: "Triangle",
       }
     
-    case "text":
+    case "i-text":
       return {
         icon: Type,
         name: "Text",
@@ -106,10 +106,10 @@ const getShapeInfo = (shapeType: string) => {
   &:hover {
     background-color: #f5f5f5;
   }
-}
 
-.shape-item.selected {
-  background-color: #e5f4ff;
+  &.selected {
+    background-color: #e5f4ff;
+  }
 }
 </style>
 

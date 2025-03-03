@@ -216,7 +216,6 @@ export const handleCanvasObjectMoving = ({
   elAttrsRef,
   setElAttrsRef,
 }: CanvasObjectMoving) => {
-  console.log('moving')
   if (!options.target) return
 
   const activeObjects = canvas.getActiveObjects()
@@ -288,6 +287,7 @@ export const handleCanvasObjectSelected = ({
     (obj) => objectIds.includes((obj as any).objectId)
   )
 
+  console.log(targetObjects)
   if (targetObjects.length === 0) {
     canvas.discardActiveObject()
     canvas.renderAll()

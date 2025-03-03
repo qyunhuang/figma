@@ -34,6 +34,10 @@ import {
   handleCanvasObjectModified,
   handleCanvasObjectSelected,
 } from '@/lib/canvas'
+import {  
+  loadCanvasFromStorage,
+  loadObjectsToCanvas
+} from '@/lib/shape'
 import CanvasContainer from '@/components/CanvasContainer.vue'
 import { OptionType, Attributes } from '@/types/type'
 
@@ -88,7 +92,8 @@ const syncShapeInStorage = (object: fabric.Object) => {
   shapeData.objectId = objectId
 
   canvasObjects.value[objectId] = shapeData
-  console.log(objectId, shapeData, canvasObjects.value)
+
+  localStorage.setItem('canvasObjects', JSON.stringify(canvasObjects.value))
 }
 
 // 定义回调函数，接收子组件的 canvasRef
@@ -96,6 +101,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   canvasRef.value = ref
 
   const canvas = initializeFabric({ canvasRef, fabricRef })
+
 
   // 全局样式设置
   fabric.Object.prototype.set({
@@ -113,6 +119,13 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   rotateControls.visible = false
 
   if (!canvas) return
+
+  const storedCanvasObjects = loadCanvasFromStorage()
+  canvasObjects.value = storedCanvasObjects
+  if (storedCanvasObjects) {
+    const objectsData = Object.values(storedCanvasObjects)
+    loadObjectsToCanvas(canvas, objectsData)
+  }
 
   canvas.on('mouse:down', (options) => {
     if (selectedToolRef.value === 'hand') {

@@ -135,3 +135,20 @@ export const modifyShape = ({
 
   syncShapeInStorage(selectedElement)
 }
+
+export const loadCanvasFromStorage = () => {
+  const storedData = localStorage.getItem('canvasObjects')
+  if (storedData) {
+    return JSON.parse(storedData)
+  }
+  return null
+}  
+
+export const loadObjectsToCanvas = (canvas: fabric.Canvas, objectData: any) => {
+  fabric.util.enlivenObjects(objectData, (enlivenedObjects: fabric.Object[]) => {
+    enlivenedObjects.forEach((obj) => {
+      canvas.add(obj)
+    })
+    canvas.renderAll() 
+  }, "fabric")
+}
