@@ -4,12 +4,18 @@
       Layers
     </div>
     <div class="flex flex-col px-4 gap-2">
-      <div class="flex items-center gap-2" v-for="objectId in Object.keys($props.canvasObjects)">
+      <div 
+        :class="{'shape-item': true, 'selected': $props.selectedObjectIds.includes(objectId)}"
+        v-for="objectId in Object.keys($props.canvasObjects)"
+        :key="objectId"
+        @click="handleSelectObject(objectId)"
+      >
         <div>
           <component 
             :is="getShapeInfo(($props.canvasObjects[objectId] as any).type).icon" 
             :size="12" 
             :stroke-width="1"
+            color="#ababab"
           />
         </div>
         <div class="text-[12px]">
@@ -23,9 +29,19 @@
 <script setup lang="ts">
 import { Square, Slash, Circle, Triangle, Type, Spline } from 'lucide-vue-next'
 
-defineProps<{
+const props = defineProps<{
   canvasObjects: Record<string, Object>;
+  selectedObjectIds: string[];
+  setSelectedObjectIds: (ids: string[]) => void;
 }>()
+
+const handleSelectObject = (objectId: string) => {
+  if (props.selectedObjectIds.includes(objectId)) {
+    props.setSelectedObjectIds(props.selectedObjectIds.filter((id) => id !== objectId))
+  } else {
+    props.setSelectedObjectIds([...props.selectedObjectIds, objectId])
+  }
+}
 
 const getShapeInfo = (shapeType: string) => {
   switch (shapeType) {
@@ -78,6 +94,22 @@ const getShapeInfo = (shapeType: string) => {
 .left-side-bar {
   background-color: white;
   width: 250px;
+}
+
+.shape-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 4px;
+  border-radius: 6px;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+}
+
+.shape-item.selected {
+  background-color: #e5f4ff;
 }
 </style>
 

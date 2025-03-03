@@ -1,9 +1,21 @@
 <template>
   <div class="container">
-    <LeftSideBar :canvasObjects="canvasObjects" />
+    <LeftSideBar 
+      :canvasObjects="canvasObjects"
+      :selectedObjectIds="selectedObjectIdsRef"
+      :setSelectedObjectIds="setSelectedObjectIdsRef"
+    />
     <CanvasContainer :onMounted="handleCanvasMounted" />
-    <RightSideBar :fabric="fabricRef" :setElAttrs="setElAttrsRef" :elAttrs="elAttrsRef" :syncShapeInStorage="syncShapeInStorage" />
-    <ToolBelt :selectedToolRef="selectedToolRef" :setSelectedToolRef="setSelectedToolRef" />
+    <RightSideBar 
+      :fabric="fabricRef" 
+      :setElAttrs="setElAttrsRef" 
+      :elAttrs="elAttrsRef" 
+      :syncShapeInStorage="syncShapeInStorage" 
+    />
+    <ToolBelt 
+      :selectedToolRef="selectedToolRef" 
+      :setSelectedToolRef="setSelectedToolRef" 
+    />
   </div>
 </template>
 
@@ -20,6 +32,7 @@ import {
   handleCanvasSelectionCleared,
   handleCanvasPathCreated,
   handleCanvasObjectModified,
+  handleCanvasObjectSelected,
 } from '@/lib/canvas'
 import CanvasContainer from '@/components/CanvasContainer.vue'
 import { OptionType, Attributes } from '@/types/type'
@@ -32,6 +45,8 @@ const selectedToolRef = ref<OptionType>('rect')
 const startPointRef = ref<{ x: number; y: number } | null>(null)
 const isDraggingRef = ref<boolean>(false)
 const lastPositionRef = ref<{ x: number; y: number }>({ x: 0, y: 0 })
+const selectedObjectIdsRef = ref<string[]>([])
+const isProgrammaticSelectionRef = ref<boolean>(false)
 const elAttrsRef = ref<Attributes>({
   left: '',
   top: '',
@@ -50,6 +65,12 @@ const setSelectedToolRef = (shape: OptionType) => {
 
 const setElAttrsRef = (attrs: Attributes) => {
   elAttrsRef.value = attrs
+}
+
+const setSelectedObjectIdsRef = (ids: string[]) => {
+  if (!fabricRef.value) return
+  selectedObjectIdsRef.value = ids
+  handleCanvasObjectSelected({ canvas: fabricRef.value, objectIds: ids, isProgrammaticSelectionRef })
 }
 
 watch(() => selectedToolRef.value, (shape) => {
@@ -113,7 +134,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
       lastPositionRef.value = { x: e.clientX, y: e.clientY }
       canvas.requestRenderAll()
     } else {
-      handleMouseMove({ options, canvas, shapeRef, selectedToolRef, startPointRef, syncShapeInStorage })
+      handleMouseMove({ options, canvas, shapeRef, selectedToolRef, startPointRef })
     }
   })
 
@@ -142,15 +163,18 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   })
 
   canvas.on('selection:created', (options) => {
-    handleCanvasSelectionCreated({ options, setElAttrsRef })
+    if (isProgrammaticSelectionRef.value) return
+    handleCanvasSelectionCreated({ options, setElAttrsRef, setSelectedObjectIdsRef })
   })
 
   canvas.on('selection:updated', (options) => {
-    handleCanvasSelectionCreated({ options, setElAttrsRef })
+    if (isProgrammaticSelectionRef.value) return
+    handleCanvasSelectionCreated({ options, setElAttrsRef, setSelectedObjectIdsRef })
   })
 
   canvas.on('selection:cleared', () => {
-    handleCanvasSelectionCleared({ setElAttrsRef })
+    if (isProgrammaticSelectionRef.value) return
+    handleCanvasSelectionCleared({ setElAttrsRef, setSelectedObjectIdsRef })
   })
 
   canvas.on("object:moving", (options) => {

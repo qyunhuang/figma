@@ -10,6 +10,7 @@ import {
   CanvasSelectionCleared,
   CanvasPathCreated,
   CanvasObjectModified,
+  CanvasObjectSelected,
 } from '@/types/type'
 import { createSpecificShape } from './shape'
 import { v4 as uuid4 } from "uuid"
@@ -100,8 +101,7 @@ export const handleMouseMove = ({
   options,
   canvas,
   selectedToolRef,
-  shapeRef,
-  syncShapeInStorage
+  shapeRef
 }: CanvasMouseMove) => {
   if (selectedToolRef.value === "pencil") return
   canvas.isDrawingMode = false
@@ -138,10 +138,6 @@ export const handleMouseMove = ({
       break
   }
   canvas.renderAll()
-
-  if (shapeRef.value && (shapeRef.value as any)?.objectId) {
-    syncShapeInStorage(shapeRef.value)
-  }
 }
 
 export const handleMouseMoveUp = ({
@@ -159,18 +155,22 @@ export const handleMouseMoveUp = ({
 export const handleCanvasSelectionCreated = ({
   options,
   setElAttrsRef,
+  setSelectedObjectIdsRef,
 }: CanvasSelectionCreated) => {
   if (!options?.selected) return
+
+  const selectedIds = options.selected.map((obj) => (obj as any).objectId)
+  setSelectedObjectIdsRef(selectedIds)
 
   const selectedEl = options?.selected[0] as fabric.Object
   if (selectedEl && options.selected.length === 1) {
     const scaledWidth = selectedEl?.scaleX
       ? selectedEl?.width! * selectedEl?.scaleX
-      : selectedEl?.width;
+      : selectedEl?.width
 
     const scaledHeight = selectedEl?.scaleY
       ? selectedEl?.height! * selectedEl?.scaleY
-      : selectedEl?.height;
+      : selectedEl?.height
 
     setElAttrsRef({
       left: selectedEl.left?.toFixed(0).toString() || '',
@@ -189,8 +189,10 @@ export const handleCanvasSelectionCreated = ({
 }
 
 export const handleCanvasSelectionCleared = ({
-  setElAttrsRef
+  setElAttrsRef,
+  setSelectedObjectIdsRef,
 }: CanvasSelectionCleared) => {
+  setSelectedObjectIdsRef([])
   setElAttrsRef(defaultAttributes)
 }
 
@@ -199,7 +201,7 @@ export const handleCanvasPathCreated = ({
   syncShapeInStorage,
 }: CanvasPathCreated) => {
   const path = options.path
-  if (!path) return;
+  if (!path) return
 
   path.set({
     objectId: uuid4(),
@@ -214,6 +216,7 @@ export const handleCanvasObjectMoving = ({
   elAttrsRef,
   setElAttrsRef,
 }: CanvasObjectMoving) => {
+  console.log('moving')
   if (!options.target) return
 
   const activeObjects = canvas.getActiveObjects()
@@ -271,4 +274,32 @@ export const handleCanvasObjectModified = ({
   } else {
     syncShapeInStorage(target)
   }
+}
+
+export const handleCanvasObjectSelected = ({
+  canvas,
+  objectIds,
+  isProgrammaticSelectionRef
+}: CanvasObjectSelected) => {
+  isProgrammaticSelectionRef.value = true
+
+  const objects = canvas.getObjects()
+  const targetObjects = objects.filter(
+    (obj) => objectIds.includes((obj as any).objectId)
+  )
+
+  if (targetObjects.length === 0) {
+    canvas.discardActiveObject()
+    canvas.renderAll()
+  } else if (targetObjects.length === 1) {
+    canvas.setActiveObject(targetObjects[0])
+  } else if (targetObjects.length > 1) {
+    canvas.discardActiveObject()
+    canvas.setActiveObject(new fabric.ActiveSelection(targetObjects, {
+      canvas: canvas,
+    }))
+    canvas.renderAll()
+  }
+
+  isProgrammaticSelectionRef.value = false
 }

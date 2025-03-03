@@ -16,7 +16,6 @@ export type CanvasMouseMove = {
   selectedToolRef: any;
   shapeRef: Ref<fabric.Object | null>;
   startPointRef: Ref<{ x: number; y: number } | null>;
-  syncShapeInStorage: (shape: fabric.Object) => void;
 }
 
 export type CanvasMouseMoveUp = {
@@ -27,10 +26,12 @@ export type CanvasMouseMoveUp = {
 export type CanvasSelectionCreated = {
   options: fabric.IEvent;
   setElAttrsRef: (attrs: Attributes) => void;
+  setSelectedObjectIdsRef: (ids: string[]) => void;
 }
 
 export type CanvasSelectionCleared  = {
   setElAttrsRef: (attrs: Attributes) => void;
+  setSelectedObjectIdsRef: (ids: string[]) => void;
 }
 
 export type CanvasPathCreated = {
@@ -55,6 +56,12 @@ export type CanvasObjectScaling = {
 export type CanvasObjectModified = {
   options: fabric.IEvent;
   syncShapeInStorage: (shape: fabric.Object) => void;
+}
+
+export type CanvasObjectSelected = {
+  canvas: fabric.Canvas;
+  objectIds: string[];
+  isProgrammaticSelectionRef: Ref<boolean>;
 }
 
 export interface CustomFabricObject<T extends fabric.Object>
