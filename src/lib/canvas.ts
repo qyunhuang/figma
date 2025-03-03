@@ -8,8 +8,11 @@ import {
   CanvasObjectMoving,
   CanvasObjectScaling, 
   CanvasSelectionCleared,
+  CanvasPathCreated,
+  CanvasObjectModified,
 } from '@/types/type'
 import { createSpecificShape } from './shape'
+import { v4 as uuid4 } from "uuid"
 
 const mixedAttributes = {
   left: 'Mixed',
@@ -98,6 +101,7 @@ export const handleMouseMove = ({
   canvas,
   selectedToolRef,
   shapeRef,
+  syncShapeInStorage
 }: CanvasMouseMove) => {
   if (selectedToolRef.value === "pencil") return
   canvas.isDrawingMode = false
@@ -134,11 +138,18 @@ export const handleMouseMove = ({
       break
   }
   canvas.renderAll()
+
+  if (shapeRef.value && (shapeRef.value as any)?.objectId) {
+    syncShapeInStorage(shapeRef.value)
+  }
 }
 
 export const handleMouseMoveUp = ({
   shapeRef,
+  syncShapeInStorage,
 }: CanvasMouseMoveUp) => {
+  syncShapeInStorage(shapeRef.value as fabric.Object)
+
   if (shapeRef.value) {
     shapeRef.value.set({ visible: true })
   }
@@ -181,6 +192,20 @@ export const handleCanvasSelectionCleared = ({
   setElAttrsRef
 }: CanvasSelectionCleared) => {
   setElAttrsRef(defaultAttributes)
+}
+
+export const handleCanvasPathCreated = ({
+  options,
+  syncShapeInStorage,
+}: CanvasPathCreated) => {
+  const path = options.path
+  if (!path) return;
+
+  path.set({
+    objectId: uuid4(),
+  })
+
+  syncShapeInStorage(path)
 }
 
 export const handleCanvasObjectMoving = ({
@@ -231,5 +256,19 @@ export const handleCanvasObjectScaling = ({
       width: scaledWidth?.toFixed(0).toString() || '',
       height: scaledHeight?.toFixed(0).toString() || '',
     })
+  }
+}
+
+export const handleCanvasObjectModified = ({
+  options,
+  syncShapeInStorage,
+}: CanvasObjectModified) => {
+  const target = options.target
+  if (!target) return
+
+  if (target?.type == "activeSelection") {
+    // fix this
+  } else {
+    syncShapeInStorage(target)
   }
 }

@@ -113,6 +113,7 @@ export const modifyShape = ({
   canvas,
   property,
   value,
+  syncShapeInStorage,
 }: ModifyShape) => {
   if (!canvas) return
   const selectedElement = canvas.getActiveObject()
@@ -123,13 +124,14 @@ export const modifyShape = ({
 
   if (property === "width") {
     selectedElement.set("scaleX", 1)
-    selectedElement.set("width", value); 
+    selectedElement.set("width", value)
   } else if (property === "height") {
     selectedElement.set("scaleY", 1)
     selectedElement.set("height", value)
   } else {
     if (selectedElement[property as keyof object] === value) return
     selectedElement.set(property as keyof object, value)
-    console.log(selectedElement)
   }
+
+  syncShapeInStorage(selectedElement)
 }

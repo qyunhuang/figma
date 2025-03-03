@@ -75,11 +75,11 @@
     </div>
     <div class="block">
       <div class="flex justify-between items-center">
-        <div class="py-3 px-4 font-medium text-[12px]">
+        <div class="py-3 px-4 font-medium text-[12px] block-plus">
           Stroke
         </div>
         <div class="plus" @click="handleAddStroke">
-          <Plus :size="18" color="#000" stroke-width="1" />
+          <Plus :size="18" :color="textColor" stroke-width="1" />
         </div>
       </div>
       <div v-if="$props.elAttrsRef.stroke" class="pb-2 px-4 flex gap-2">
@@ -125,66 +125,81 @@ const props = defineProps<{
   fabricRef: fabric.Canvas | null
   elAttrsRef: Attributes;
   setElAttrsRef: (attrs: Attributes) => void;
+  syncShapeInStorage: (object: fabric.Object) => void;
 }>()
 
 const getIconColor = (color: string) => {
-  return color === '' ? '#ababab' : color
+  return (color === '' || color === 'Mixed') ? '#ababab' : color
+}
+
+const textColor = computed(() => {
+  return props.elAttrsRef.stroke ? '#000' : '#ababab'
+})
+
+const handleModifyShape = ({
+  property,
+  value,
+}: {
+  property: string;
+  value: string | null;
+}) => {
+  modifyShape({ canvas: props.fabricRef, property, value, syncShapeInStorage: props.syncShapeInStorage })
 }
 
 const handleChangeLeft = (value: string) => {
   props.setElAttrsRef({ ...props.elAttrsRef, left: value })
-  modifyShape({ canvas: props.fabricRef, property: 'left', value })
+  handleModifyShape({ property: 'left', value })
 }
 
 const handleChangeTop = (value: string) => {
   props.setElAttrsRef({ ...props.elAttrsRef, top: value })
-  modifyShape({ canvas: props.fabricRef, property: 'top', value })
+  handleModifyShape({ property: 'top', value })
 }
 
 const handleChangeWidth = (value: string) => {
   props.setElAttrsRef({ ...props.elAttrsRef, width: value })
-  modifyShape({ canvas: props.fabricRef, property: 'width', value })
+  handleModifyShape({ property: 'width', value })
 }
 
 const handleChangeHeight = (value: string) => {
   props.setElAttrsRef({ ...props.elAttrsRef, height: value })
-  modifyShape({ canvas: props.fabricRef, property: 'height', value })
+  handleModifyShape({ property: 'height', value })
 }
 
 const handleChangeAngle = (value: string) => {
   props.setElAttrsRef({ ...props.elAttrsRef, angle: value })
-  modifyShape({ canvas: props.fabricRef, property: 'angle', value })
+  handleModifyShape({ property: 'angle', value })
 }
 
 const handleChangeFill = (value: string) => {
   props.setElAttrsRef({ ...props.elAttrsRef, fill: value })
-  modifyShape({ canvas: props.fabricRef, property: 'fill', value })
+  handleModifyShape({ property: 'fill', value })
 }
 
 const handleChangeOpacity = (value: string) => {
   props.setElAttrsRef({ ...props.elAttrsRef, opacity: value })
-  modifyShape({ canvas: props.fabricRef, property: 'opacity', value })
+  handleModifyShape({ property: 'opacity', value })
 }
 
 const handleAddStroke = () => {
   props.setElAttrsRef({ ...props.elAttrsRef, strokeWidth: '1', stroke: '#000000' })
-  modifyShape({ canvas: props.fabricRef, property: 'stroke', value: '#000000' })
-  modifyShape({ canvas: props.fabricRef, property: 'strokeWidth', value: '1' })
+  handleModifyShape({ property: 'stroke', value: '#000000' })
+  handleModifyShape({ property: 'strokeWidth', value: '1' })
 }
 
 const handleRemoveStroke = () => {
   props.setElAttrsRef({ ...props.elAttrsRef, strokeWidth: '', stroke: '' })
-  modifyShape({ canvas: props.fabricRef, property: 'stroke', value: null })
+  handleModifyShape({ property: 'stroke', value: null })
 }
 
 const handleChangeStroke = (value: string) => {
   props.setElAttrsRef({ ...props.elAttrsRef, stroke: value })
-  modifyShape({ canvas: props.fabricRef, property: 'stroke', value })
+  handleModifyShape({ property: 'stroke', value })
 }
 
 const handleChangeStrokeWidth = (value: string) => {
   props.setElAttrsRef({ ...props.elAttrsRef, strokeWidth: value })
-  modifyShape({ canvas: props.fabricRef, property: 'strokeWidth', value })
+  handleModifyShape({ property: 'strokeWidth', value })
 }
 
 </script>
@@ -218,6 +233,10 @@ const handleChangeStrokeWidth = (value: string) => {
   &:hover {
     background-color: #f5f5f5;
   }
+}
+
+.block-plus {
+  color: v-bind(textColor);
 }
 </style>
 

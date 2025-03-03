@@ -16,10 +16,12 @@ export type CanvasMouseMove = {
   selectedToolRef: any;
   shapeRef: Ref<fabric.Object | null>;
   startPointRef: Ref<{ x: number; y: number } | null>;
+  syncShapeInStorage: (shape: fabric.Object) => void;
 }
 
 export type CanvasMouseMoveUp = {
   shapeRef: Ref<fabric.Object | null>;
+  syncShapeInStorage: (shape: fabric.Object) => void;
 }
 
 export type CanvasSelectionCreated = {
@@ -29,6 +31,11 @@ export type CanvasSelectionCreated = {
 
 export type CanvasSelectionCleared  = {
   setElAttrsRef: (attrs: Attributes) => void;
+}
+
+export type CanvasPathCreated = {
+  options: (fabric.IEvent & { path: CustomFabricObject<fabric.Path> }) | any;
+  syncShapeInStorage: (shape: fabric.Object) => void;
 }
 
 export type CanvasObjectMoving = {
@@ -43,6 +50,11 @@ export type CanvasObjectScaling = {
   canvas: fabric.Canvas;
   elAttrsRef: Ref<Attributes>;
   setElAttrsRef: (attrs: Attributes) => void;
+}
+
+export type CanvasObjectModified = {
+  options: fabric.IEvent;
+  syncShapeInStorage: (shape: fabric.Object) => void;
 }
 
 export interface CustomFabricObject<T extends fabric.Object>
@@ -66,4 +78,5 @@ export type ModifyShape = {
   canvas: fabric.Canvas | null;
   property: string;
   value: any;
+  syncShapeInStorage: (shape: fabric.Object) => void;
 }

@@ -2,7 +2,7 @@
   <div class="container">
     <LeftSideBar />
     <CanvasContainer :onMounted="handleCanvasMounted" />
-    <RightSideBar :fabric-ref="fabricRef" :setElAttrsRef="setElAttrsRef" :elAttrsRef="elAttrsRef" />
+    <RightSideBar :fabric-ref="fabricRef" :setElAttrsRef="setElAttrsRef" :elAttrsRef="elAttrsRef" :syncShapeInStorage="syncShapeInStorage" />
     <ToolBelt :selectedToolRef="selectedToolRef" :setSelectedToolRef="setSelectedToolRef" />
   </div>
 </template>
@@ -18,11 +18,14 @@ import {
   handleCanvasObjectMoving,
   handleCanvasObjectScaling,
   handleCanvasSelectionCleared,
+  handleCanvasPathCreated,
+  handleCanvasObjectModified,
 } from '@/lib/canvas'
 import CanvasContainer from '@/components/CanvasContainer.vue'
 import { OptionType, Attributes } from '@/types/type'
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
+const canvasObjects = ref<Record<string, Object>>({})
 const fabricRef = ref<fabric.Canvas | null>(null)
 const shapeRef = ref<fabric.Object | null>(null)
 const selectedToolRef = ref<OptionType>('rect')
@@ -56,6 +59,17 @@ watch(() => selectedToolRef.value, (shape) => {
   }
 })
 
+const syncShapeInStorage = (object: fabric.Object) => {
+  if (!object) return
+  const { objectId } = object as any
+
+  const shapeData: any = object.toJSON()
+  shapeData.objectId = objectId
+
+  canvasObjects.value[objectId] = shapeData
+  console.log(objectId, shapeData, canvasObjects.value)
+}
+
 // 定义回调函数，接收子组件的 canvasRef
 const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   canvasRef.value = ref
@@ -69,6 +83,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
     cornerColor: 'white',
     cornerSize: 8,
     transparentCorners: false,
+    strokeUniform: true,
   });
 
   // 移除旋转控制
@@ -98,14 +113,14 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
       lastPositionRef.value = { x: e.clientX, y: e.clientY }
       canvas.requestRenderAll()
     } else {
-      handleMouseMove({ options, canvas, shapeRef, selectedToolRef, startPointRef })
+      handleMouseMove({ options, canvas, shapeRef, selectedToolRef, startPointRef, syncShapeInStorage })
     }
   })
 
   canvas.on('mouse:up', () => {
     isDraggingRef.value = false
     canvas.selection = true
-    handleMouseMoveUp({ shapeRef })
+    handleMouseMoveUp({ shapeRef, syncShapeInStorage })
     if (['rect', 'line', 'ellipse', 'triangle', 'text'].includes(selectedToolRef.value)) {
       selectedToolRef.value = 'move'
     }
@@ -140,11 +155,19 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
 
   canvas.on("object:moving", (options) => {
     handleCanvasObjectMoving({ options, elAttrsRef, canvas, setElAttrsRef })
-  });
+  })
 
   canvas.on("object:scaling", (options) => {
     handleCanvasObjectScaling({ options, elAttrsRef, canvas, setElAttrsRef })
+  })
+
+  canvas.on("object:modified", (options) => {
+    handleCanvasObjectModified({ options, syncShapeInStorage });
   });
+
+  canvas.on("path:created", (options) => {
+    handleCanvasPathCreated({ options, syncShapeInStorage })
+  })
 }
 
 </script>
