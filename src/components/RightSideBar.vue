@@ -1,10 +1,10 @@
 <template>
   <div class="right-side-bar">
-    <div class="block">
+    <!-- <div class="block">
       <div class="py-3 px-4 font-medium text-[14px]">
         Rectangle
       </div>
-    </div>
+    </div> -->
     <div class="block">
       <div class="py-3 px-4 font-medium text-[12px]">
         Position
@@ -12,19 +12,19 @@
       <div class="pb-2 px-4 flex gap-2">
         <Input
           left-text="X"
-          :value="$props.elAttrsRef.left"
+          :value="$props.elAttrs.left"
           :handle-change="handleChangeLeft"
         />
         <Input
           left-text="Y"
-          :value="$props.elAttrsRef.top"
+          :value="$props.elAttrs.top"
           :handle-change="handleChangeTop"
         />
       </div>
       <div class="pb-2 px-4 flex gap-2">
         <Input
           left-text=""
-          :value="$props.elAttrsRef.angle"
+          :value="$props.elAttrs.angle"
           :handle-change="handleChangeAngle"
         >
           <template #left>
@@ -40,12 +40,12 @@
       <div class="pb-2 px-4 flex gap-2">
         <Input
           left-text="W"
-          :value="$props.elAttrsRef.width"
+          :value="$props.elAttrs.width"
           :handle-change="handleChangeWidth"
         />
         <Input
           left-text="H"
-          :value="$props.elAttrsRef.height"
+          :value="$props.elAttrs.height"
           :handle-change="handleChangeHeight"
         />
       </div>
@@ -58,16 +58,16 @@
         <FillInput
           left-text=""
           right-text="%"
-          :left-value="$props.elAttrsRef.fill"
-          :right-value="$props.elAttrsRef.opacity"
+          :left-value="$props.elAttrs.fill"
+          :right-value="$props.elAttrs.opacity"
           :handle-left-change="handleChangeFill"
           :handle-right-change="handleChangeOpacity"
         >
           <template #left>
             <Square 
               :size="12" 
-              :color="getIconColor($props.elAttrsRef.fill)" 
-              :fill="getIconColor($props.elAttrsRef.fill)" 
+              :color="getIconColor($props.elAttrs.fill)" 
+              :fill="getIconColor($props.elAttrs.fill)" 
             />
           </template>
         </FillInput>
@@ -82,23 +82,23 @@
           <Plus :size="18" :color="textColor" stroke-width="1" />
         </div>
       </div>
-      <div v-if="$props.elAttrsRef.stroke" class="pb-2 px-4 flex gap-2">
+      <div v-if="$props.elAttrs.stroke" class="pb-2 px-4 flex gap-2">
         <StrokeInput
           left-text=""
-          :value="$props.elAttrsRef.stroke"
+          :value="$props.elAttrs.stroke"
           :handle-change="handleChangeStroke"
         >
           <template #left>
             <Square 
               :size="12" 
-              :color="getIconColor($props.elAttrsRef.stroke)" 
-              :fill="getIconColor($props.elAttrsRef.stroke)"
+              :color="getIconColor($props.elAttrs.stroke)" 
+              :fill="getIconColor($props.elAttrs.stroke)"
             />
           </template>
         </StrokeInput>
         <Input
           left-text=""
-          :value="$props.elAttrsRef.strokeWidth"
+          :value="$props.elAttrs.strokeWidth"
           :handle-change="handleChangeStrokeWidth"
         >
           <template #left>
@@ -122,9 +122,9 @@ import { Attributes } from '@/types/type'
 import { modifyShape } from '@/lib/shape'
 
 const props = defineProps<{
-  fabricRef: fabric.Canvas | null
-  elAttrsRef: Attributes;
-  setElAttrsRef: (attrs: Attributes) => void;
+  fabric: fabric.Canvas | null
+  elAttrs: Attributes;
+  setElAttrs: (attrs: Attributes) => void;
   syncShapeInStorage: (object: fabric.Object) => void;
 }>()
 
@@ -133,7 +133,7 @@ const getIconColor = (color: string) => {
 }
 
 const textColor = computed(() => {
-  return props.elAttrsRef.stroke ? '#000' : '#ababab'
+  return props.elAttrs.stroke ? '#000' : '#ababab'
 })
 
 const handleModifyShape = ({
@@ -143,62 +143,62 @@ const handleModifyShape = ({
   property: string;
   value: string | null;
 }) => {
-  modifyShape({ canvas: props.fabricRef, property, value, syncShapeInStorage: props.syncShapeInStorage })
+  modifyShape({ canvas: props.fabric, property, value, syncShapeInStorage: props.syncShapeInStorage })
 }
 
 const handleChangeLeft = (value: string) => {
-  props.setElAttrsRef({ ...props.elAttrsRef, left: value })
+  props.setElAttrs({ ...props.elAttrs, left: value })
   handleModifyShape({ property: 'left', value })
 }
 
 const handleChangeTop = (value: string) => {
-  props.setElAttrsRef({ ...props.elAttrsRef, top: value })
+  props.setElAttrs({ ...props.elAttrs, top: value })
   handleModifyShape({ property: 'top', value })
 }
 
 const handleChangeWidth = (value: string) => {
-  props.setElAttrsRef({ ...props.elAttrsRef, width: value })
+  props.setElAttrs({ ...props.elAttrs, width: value })
   handleModifyShape({ property: 'width', value })
 }
 
 const handleChangeHeight = (value: string) => {
-  props.setElAttrsRef({ ...props.elAttrsRef, height: value })
+  props.setElAttrs({ ...props.elAttrs, height: value })
   handleModifyShape({ property: 'height', value })
 }
 
 const handleChangeAngle = (value: string) => {
-  props.setElAttrsRef({ ...props.elAttrsRef, angle: value })
+  props.setElAttrs({ ...props.elAttrs, angle: value })
   handleModifyShape({ property: 'angle', value })
 }
 
 const handleChangeFill = (value: string) => {
-  props.setElAttrsRef({ ...props.elAttrsRef, fill: value })
+  props.setElAttrs({ ...props.elAttrs, fill: value })
   handleModifyShape({ property: 'fill', value })
 }
 
 const handleChangeOpacity = (value: string) => {
-  props.setElAttrsRef({ ...props.elAttrsRef, opacity: value })
+  props.setElAttrs({ ...props.elAttrs, opacity: value })
   handleModifyShape({ property: 'opacity', value })
 }
 
 const handleAddStroke = () => {
-  props.setElAttrsRef({ ...props.elAttrsRef, strokeWidth: '1', stroke: '#000000' })
+  props.setElAttrs({ ...props.elAttrs, strokeWidth: '1', stroke: '#000000' })
   handleModifyShape({ property: 'stroke', value: '#000000' })
   handleModifyShape({ property: 'strokeWidth', value: '1' })
 }
 
 const handleRemoveStroke = () => {
-  props.setElAttrsRef({ ...props.elAttrsRef, strokeWidth: '', stroke: '' })
+  props.setElAttrs({ ...props.elAttrs, strokeWidth: '', stroke: '' })
   handleModifyShape({ property: 'stroke', value: null })
 }
 
 const handleChangeStroke = (value: string) => {
-  props.setElAttrsRef({ ...props.elAttrsRef, stroke: value })
+  props.setElAttrs({ ...props.elAttrs, stroke: value })
   handleModifyShape({ property: 'stroke', value })
 }
 
 const handleChangeStrokeWidth = (value: string) => {
-  props.setElAttrsRef({ ...props.elAttrsRef, strokeWidth: value })
+  props.setElAttrs({ ...props.elAttrs, strokeWidth: value })
   handleModifyShape({ property: 'strokeWidth', value })
 }
 

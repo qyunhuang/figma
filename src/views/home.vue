@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <LeftSideBar />
+    <LeftSideBar :canvasObjects="canvasObjects" />
     <CanvasContainer :onMounted="handleCanvasMounted" />
-    <RightSideBar :fabric-ref="fabricRef" :setElAttrsRef="setElAttrsRef" :elAttrsRef="elAttrsRef" :syncShapeInStorage="syncShapeInStorage" />
+    <RightSideBar :fabric="fabricRef" :setElAttrs="setElAttrsRef" :elAttrs="elAttrsRef" :syncShapeInStorage="syncShapeInStorage" />
     <ToolBelt :selectedToolRef="selectedToolRef" :setSelectedToolRef="setSelectedToolRef" />
   </div>
 </template>
