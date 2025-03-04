@@ -24,8 +24,6 @@ const props = defineProps<{
   handleChange: (value: string) => void;
 }>();
 
-const emit = defineEmits(['input'])
-
 const inputRef = ref<HTMLInputElement | null>(null)
 
 const inputValue = ref(props.value)
@@ -39,7 +37,6 @@ watch(
 
 const handleConfirm = () => {
   props.handleChange(inputValue.value)
-  emit('input', inputValue.value)
 }
 
 const handleEnter = () => {

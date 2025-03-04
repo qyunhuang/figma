@@ -30,8 +30,6 @@ const props = defineProps<{
   handleChange: (value: string) => void;
 }>()
 
-const emit = defineEmits(['update:value'])
-
 const isOpen = ref(false)
 const selectedOption = ref(props.options.find(opt => opt.value === props.value)?.label)
 
@@ -48,7 +46,6 @@ const toggleDropdown = () => {
 
 const selectOption = (option: { label: string; value: string }) => {
   selectedOption.value = option.label
-  emit('update:value', option.value)
   props.handleChange(option.value)
   isOpen.value = false
 }

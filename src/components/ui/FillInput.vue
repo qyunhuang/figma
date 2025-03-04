@@ -41,8 +41,6 @@ const props = defineProps<{
   handleRightChange: (value: string) => void;
 }>();
 
-const emit = defineEmits(['leftInput', 'rightInput']);
-
 const leftInputRef = ref<HTMLInputElement | null>(null)
 const rightInputRef = ref<HTMLInputElement | null>(null)
 
@@ -65,12 +63,10 @@ watch(
 
 const handleLeftConfirm = () => {
   props.handleLeftChange(toHexString(inputLeftValue.value))
-  emit('leftInput', toHexString(inputLeftValue.value))
 }
 
 const handleRightConfirm = () => {
   props.handleRightChange(toDecimal(inputRightValue.value))
-  emit('rightInput', toDecimal(inputRightValue.value))
 }
 
 const handleLeftEnter = () => {
