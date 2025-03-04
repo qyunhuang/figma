@@ -54,7 +54,7 @@
       <div class="py-3 px-4 font-medium text-[12px] typography-block">
         Typography
       </div>
-      <div v-if="$props.elAttrs.fontWeight" class="pb-2 px-4 flex gap-2">
+      <div v-if="$props.elAttrs.fontWeight && $props.elAttrs.fontWeight !== 'Mixed'" class="pb-2 px-4 flex gap-2">
         <div>
           <Select
             :value="$props.elAttrs.fontWeight"
@@ -99,11 +99,11 @@
         <div class="py-3 px-4 font-medium text-[12px] stroke-block">
           Stroke
         </div>
-        <div v-if="$props.elAttrs.fill" class="plus" @click="handleAddStroke">
+        <div v-if="$props.elAttrs.fill && $props.elAttrs.stroke !== 'Mixed'" class="plus" @click="handleAddStroke">
           <Plus :size="18" :color="strokeBlockColor" stroke-width="1" />
         </div>
       </div>
-      <div v-if="$props.elAttrs.stroke" class="pb-2 px-4 flex gap-2">
+      <div v-if="$props.elAttrs.stroke && $props.elAttrs.stroke !== 'Mixed'" class="pb-2 px-4 flex gap-2">
         <StrokeInput
           left-text=""
           :value="toUpperCaseString($props.elAttrs.stroke)"
@@ -156,11 +156,11 @@ const getIconColor = (color: string) => {
 }
 
 const strokeBlockColor = computed(() => {
-  return props.elAttrs.stroke ? '#000' : '#ababab'
+  return (props.elAttrs.stroke && props.elAttrs.stroke !== 'Mixed') ? '#000' : '#ababab'
 })
 
 const typographyBlockColor = computed(() => {
-  return props.elAttrs.fontWeight ? '#000' : '#ababab'
+  return (props.elAttrs.fontWeight && props.elAttrs.fontWeight !== 'Mixed') ? '#000' : '#ababab'
 })
 
 const positionBlockColor = computed(() => {

@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { fabric } from 'fabric'
-import { AlignGuidelines } from "fabric-guideline-plugin"
+// import { AlignGuidelines } from "fabric-guideline-plugin"
 import { 
   initializeFabric, 
   handleMouseMoveDown, 
@@ -78,7 +78,6 @@ const setElAttrsRef = (attrs: Attributes) => {
 const setSelectedObjectIdsRef = (ids: string[]) => {
   if (!fabricRef.value) return
   selectedObjectIdsRef.value = ids
-  setSelectedToolRef('move')
   handleCanvasObjectSelected({ canvas: fabricRef.value, objectIds: ids, isProgrammaticSelectionRef })
 }
 
@@ -140,14 +139,15 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
     loadObjectsToCanvas(canvas, objectsData)
   }
 
-  const guideline = new AlignGuidelines({
-    canvas,
-    aligningOptions: {
-      lineWidth: 1.3,
-    },
-  })
+  // fix this
+  // const guideline = new AlignGuidelines({
+  //   canvas,
+  //   aligningOptions: {
+  //     lineWidth: 1.3,
+  //   },
+  // })
 
-  guideline.init()
+  // guideline.init()
 
   canvas.on('mouse:down', (options) => {
     if (selectedToolRef.value === 'hand') {
