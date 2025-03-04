@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { toHexString, toUpperCaseString, toPercentage, toDecimal } from '@/lib/shape';
+import { toHexString, toUpperCaseString, toPercentage, toDecimal } from '@/lib/shape'
 
 const props = defineProps<{
   leftValue: string;

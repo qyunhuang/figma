@@ -63,6 +63,8 @@ const elAttrsRef = ref<Attributes>({
   opacity: '',
   stroke: '',
   strokeWidth: '',
+  fontSize: '',
+  fontWeight: '',
 })
 
 const setSelectedToolRef = (shape: OptionType) => {

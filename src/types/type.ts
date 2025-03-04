@@ -84,6 +84,8 @@ export type Attributes = {
   opacity: string;
   stroke: string;
   strokeWidth: string;
+  fontSize: string;
+  fontWeight: string;
 }
 
 export type ModifyShape = {

@@ -6,10 +6,10 @@
       </div>
     </div> -->
     <div class="block">
-      <div class="py-3 px-4 font-medium text-[12px]">
+      <div class="py-3 px-4 font-medium text-[12px] position-block">
         Position
       </div>
-      <div class="pb-2 px-4 flex gap-2">
+      <div v-if="$props.elAttrs.left" class="pb-2 px-4 flex gap-2">
         <Input
           left-text="X"
           :value="$props.elAttrs.left"
@@ -21,7 +21,7 @@
           :handle-change="handleChangeTop"
         />
       </div>
-      <div class="pb-2 px-4 flex gap-2">
+      <div v-if="$props.elAttrs.left" class="pb-2 px-4 flex gap-2">
         <Input
           left-text=""
           :value="$props.elAttrs.angle"
@@ -34,10 +34,10 @@
       </div>
     </div>
     <div class="block">
-      <div class="py-3 px-4 font-medium text-[12px]">
+      <div class="py-3 px-4 font-medium text-[12px] layout-block">
         Layout
       </div>
-      <div class="pb-2 px-4 flex gap-2">
+      <div v-if="$props.elAttrs.width" class="pb-2 px-4 flex gap-2">
         <Input
           left-text="W"
           :value="$props.elAttrs.width"
@@ -51,10 +51,31 @@
       </div>
     </div>
     <div class="block">
-      <div class="py-3 px-4 font-medium text-[12px]">
+      <div class="py-3 px-4 font-medium text-[12px] typography-block">
+        Typography
+      </div>
+      <div v-if="$props.elAttrs.fontWeight" class="pb-2 px-4 flex gap-2">
+        <div>
+          <Select
+            :value="$props.elAttrs.fontWeight"
+            :options="fontWeightOptions"
+            :handle-change="handleChangeFontWeight"
+          />
+        </div>
+        <div>
+          <Select
+            :value="$props.elAttrs.fontSize"
+            :options="fontSizeOptions"
+            :handle-change="handleChangeFontSize"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="py-3 px-4 font-medium text-[12px] fill-block">
         Fill
       </div>
-      <div class="pb-2 px-4 flex gap-2">
+      <div v-if="$props.elAttrs.fill" class="pb-2 px-4 flex gap-2">
         <FillInput
           left-text=""
           right-text="%"
@@ -75,11 +96,11 @@
     </div>
     <div class="block">
       <div class="flex justify-between items-center">
-        <div class="py-3 px-4 font-medium text-[12px] block-plus">
+        <div class="py-3 px-4 font-medium text-[12px] stroke-block">
           Stroke
         </div>
-        <div class="plus" @click="handleAddStroke">
-          <Plus :size="18" :color="textColor" stroke-width="1" />
+        <div v-if="$props.elAttrs.fill" class="plus" @click="handleAddStroke">
+          <Plus :size="18" :color="strokeBlockColor" stroke-width="1" />
         </div>
       </div>
       <div v-if="$props.elAttrs.stroke" class="pb-2 px-4 flex gap-2">
@@ -117,9 +138,11 @@
 import Input from '@/components/ui/Input.vue'
 import FillInput from '@/components/ui/FillInput.vue'
 import StrokeInput from './ui/StrokeInput.vue'
+import Select from './ui/Select.vue'
 import { RotateCw, Square, Plus, AlignJustify, Minus } from 'lucide-vue-next'
 import { Attributes } from '@/types/type'
 import { modifyShape } from '@/lib/shape'
+import { fontWeightOptions, fontSizeOptions } from '@/constants'
 
 const props = defineProps<{
   fabric: fabric.Canvas | null
@@ -132,8 +155,24 @@ const getIconColor = (color: string) => {
   return (color === '' || color === 'Mixed') ? '#ababab' : color
 }
 
-const textColor = computed(() => {
+const strokeBlockColor = computed(() => {
   return props.elAttrs.stroke ? '#000' : '#ababab'
+})
+
+const typographyBlockColor = computed(() => {
+  return props.elAttrs.fontWeight ? '#000' : '#ababab'
+})
+
+const positionBlockColor = computed(() => {
+  return props.elAttrs.left ? '#000' : '#ababab'
+})
+
+const layoutBlockColor = computed(() => {
+  return props.elAttrs.width ? '#000' : '#ababab'
+})
+
+const fillBlockColor = computed(() => {
+  return props.elAttrs.fill ? '#000' : '#ababab'
 })
 
 const handleModifyShape = ({
@@ -202,6 +241,16 @@ const handleChangeStrokeWidth = (value: string) => {
   handleModifyShape({ property: 'strokeWidth', value })
 }
 
+const handleChangeFontWeight = (value: string) => {
+  props.setElAttrs({ ...props.elAttrs, fontWeight: value })
+  handleModifyShape({ property: 'fontWeight', value })
+}
+
+const handleChangeFontSize = (value: string) => {
+  props.setElAttrs({ ...props.elAttrs, fontSize: value })
+  handleModifyShape({ property: 'fontSize', value })
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -235,8 +284,24 @@ const handleChangeStrokeWidth = (value: string) => {
   }
 }
 
-.block-plus {
-  color: v-bind(textColor);
+.stroke-block {
+  color: v-bind(strokeBlockColor);
+}
+
+.typography-block {
+  color: v-bind(typographyBlockColor);
+}
+
+.position-block {
+  color: v-bind(positionBlockColor);
+}
+
+.layout-block {
+  color: v-bind(layoutBlockColor);
+}
+
+.fill-block {
+  color: v-bind(fillBlockColor);
 }
 </style>
 
