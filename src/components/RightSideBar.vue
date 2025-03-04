@@ -79,8 +79,8 @@
         <FillInput
           left-text=""
           right-text="%"
-          :left-value="$props.elAttrs.fill"
-          :right-value="$props.elAttrs.opacity"
+          :left-value="toUpperCaseString($props.elAttrs.fill)"
+          :right-value="toPercentage($props.elAttrs.opacity)"
           :handle-left-change="handleChangeFill"
           :handle-right-change="handleChangeOpacity"
         >
@@ -106,7 +106,7 @@
       <div v-if="$props.elAttrs.stroke" class="pb-2 px-4 flex gap-2">
         <StrokeInput
           left-text=""
-          :value="$props.elAttrs.stroke"
+          :value="toUpperCaseString($props.elAttrs.stroke)"
           :handle-change="handleChangeStroke"
         >
           <template #left>
@@ -141,7 +141,7 @@ import StrokeInput from './ui/StrokeInput.vue'
 import Select from './ui/Select.vue'
 import { RotateCw, Square, Plus, AlignJustify, Minus } from 'lucide-vue-next'
 import { Attributes } from '@/types/type'
-import { modifyShape } from '@/lib/shape'
+import { modifyShape, toUpperCaseString, toPercentage } from '@/lib/shape'
 import { fontWeightOptions, fontSizeOptions } from '@/constants'
 
 const props = defineProps<{

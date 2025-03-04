@@ -22,7 +22,7 @@ const props = defineProps<{
   value: string;
   leftText: string;
   handleChange: (value: string) => void;
-}>();
+}>()
 
 const inputRef = ref<HTMLInputElement | null>(null)
 

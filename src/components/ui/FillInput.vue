@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { toHexString, toUpperCaseString, toPercentage, toDecimal } from '@/lib/shape'
+import { toHexString, toDecimal } from '@/lib/shape'
 
 const props = defineProps<{
   leftValue: string;
@@ -39,7 +39,7 @@ const props = defineProps<{
   rightText: string;
   handleLeftChange: (value: string) => void;
   handleRightChange: (value: string) => void;
-}>();
+}>()
 
 const leftInputRef = ref<HTMLInputElement | null>(null)
 const rightInputRef = ref<HTMLInputElement | null>(null)
@@ -50,14 +50,14 @@ const inputRightValue = ref(props.rightValue)
 watch(
   () => props.leftValue,
   (newValue) => {
-    inputLeftValue.value = toUpperCaseString(newValue)
+    inputLeftValue.value = newValue
   }
 )
 
 watch(
   () => props.rightValue,
   (newValue) => {
-    inputRightValue.value = toPercentage(newValue)
+    inputRightValue.value = (newValue)
   }
 )
 

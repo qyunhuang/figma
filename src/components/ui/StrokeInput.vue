@@ -18,13 +18,13 @@
 </template>
 
 <script setup lang="ts">
-import { toHexString, toUpperCaseString } from '@/lib/shape';
+import { toHexString } from '@/lib/shape';
 
 const props = defineProps<{
   value: string;
   leftText: string;
   handleChange: (value: string) => void;
-}>();
+}>()
 
 const inputRef = ref<HTMLInputElement | null>(null)
 
@@ -33,7 +33,7 @@ const inputValue = ref(props.value)
 watch(
   () => props.value,
   (newValue) => {
-    inputValue.value = toUpperCaseString(newValue)
+    inputValue.value = newValue
   },
   {
     immediate: true
