@@ -156,7 +156,7 @@ watch(() => props.selectedToolRef, (newVal) => {
       optionsRef.value[groupIndex].selectedIndex = curOptionIndex
     }
   }
-})
+}, { immediate: true })
 </script>
 
 <style lang="less" scoped>

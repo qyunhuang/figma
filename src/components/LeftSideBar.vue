@@ -37,9 +37,11 @@ const props = defineProps<{
 
 const handleSelectObject = (objectId: string) => {
   if (props.selectedObjectIds.includes(objectId)) {
-    props.setSelectedObjectIds(props.selectedObjectIds.filter((id) => id !== objectId))
+    // props.setSelectedObjectIds(props.selectedObjectIds.filter((id) => id !== objectId))
+    props.setSelectedObjectIds([])
   } else {
-    props.setSelectedObjectIds([...props.selectedObjectIds, objectId])
+    // props.setSelectedObjectIds([...props.selectedObjectIds, objectId])
+    props.setSelectedObjectIds([objectId])
   }
 }
 

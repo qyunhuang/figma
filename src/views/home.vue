@@ -1,5 +1,8 @@
 <template>
-  <div class="container">
+  <div 
+    class="container"
+    @contextmenu.prevent="openMenu"
+  >
     <LeftSideBar 
       :canvasObjects="canvasObjects"
       :selectedObjectIds="selectedObjectIdsRef"
@@ -47,7 +50,7 @@ const canvasRef = ref<HTMLCanvasElement | null>(null)
 const canvasObjects = ref<Record<string, Object>>({})
 const fabricRef = ref<fabric.Canvas | null>(null)
 const shapeRef = ref<fabric.Object | null>(null)
-const selectedToolRef = ref<OptionType>('rect')
+const selectedToolRef = ref<OptionType>('move')
 const startPointRef = ref<{ x: number; y: number } | null>(null)
 const isDraggingRef = ref<boolean>(false)
 const lastPositionRef = ref<{ x: number; y: number }>({ x: 0, y: 0 })
@@ -66,6 +69,10 @@ const elAttrsRef = ref<Attributes>({
   fontSize: '',
   fontWeight: '',
 })
+
+const openMenu = (e: MouseEvent) => {
+  console.log('openMenu', e)
+}
 
 const setSelectedToolRef = (shape: OptionType) => {
   selectedToolRef.value = shape
@@ -167,7 +174,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
       vpt[4] += e.clientX - lastPositionRef.value.x
       vpt[5] += e.clientY - lastPositionRef.value.y
       lastPositionRef.value = { x: e.clientX, y: e.clientY }
-      canvas.requestRenderAll()
+      canvas.renderAll()
     } else {
       handleMouseMove({ options, canvas, shapeRef, selectedToolRef, startPointRef })
     }
@@ -198,17 +205,14 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   })
 
   canvas.on('selection:created', (options) => {
-    if (isProgrammaticSelectionRef.value) return
-    handleCanvasSelectionCreated({ options, setElAttrsRef, setSelectedObjectIdsRef })
+    handleCanvasSelectionCreated({ options, setElAttrsRef, setSelectedObjectIdsRef, isProgrammaticSelectionRef })
   })
 
   canvas.on('selection:updated', (options) => {
-    if (isProgrammaticSelectionRef.value) return
-    handleCanvasSelectionCreated({ options, setElAttrsRef, setSelectedObjectIdsRef })
+    handleCanvasSelectionCreated({ options, setElAttrsRef, setSelectedObjectIdsRef, isProgrammaticSelectionRef })
   })
 
   canvas.on('selection:cleared', () => {
-    if (isProgrammaticSelectionRef.value) return
     handleCanvasSelectionCleared({ setElAttrsRef, setSelectedObjectIdsRef })
   })
 

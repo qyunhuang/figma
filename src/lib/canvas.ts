@@ -161,8 +161,12 @@ export const handleCanvasSelectionCreated = ({
   options,
   setElAttrsRef,
   setSelectedObjectIdsRef,
+  isProgrammaticSelectionRef
 }: CanvasSelectionCreated) => {
   if (!options?.selected) return
+
+  // 避免无限循环
+  isProgrammaticSelectionRef.value = false
 
   const selectedIds = options.selected.map((obj) => (obj as any).objectId)
   setSelectedObjectIdsRef(selectedIds)
@@ -195,6 +199,8 @@ export const handleCanvasSelectionCreated = ({
   } else if (options.selected.length > 1) {
     setElAttrsRef(mixedAttributes)
   }
+
+  isProgrammaticSelectionRef.value = true
 }
 
 export const handleCanvasSelectionCleared = ({
@@ -289,8 +295,9 @@ export const handleCanvasObjectSelected = ({
   objectIds,
   isProgrammaticSelectionRef
 }: CanvasObjectSelected) => {
-  isProgrammaticSelectionRef.value = true
+  if (!isProgrammaticSelectionRef.value) return
 
+  // 通过leftsidebar选中canvas中的object
   const objects = canvas.getObjects()
   const targetObjects = objects.filter(
     (obj) => objectIds.includes((obj as any).objectId)
@@ -307,8 +314,6 @@ export const handleCanvasObjectSelected = ({
     }))
   }
   canvas.renderAll()
-
-  isProgrammaticSelectionRef.value = false
 }
 
 export const handleCanvasObjectDeleted = ({

@@ -27,6 +27,7 @@ export type CanvasSelectionCreated = {
   options: fabric.IEvent;
   setElAttrsRef: (attrs: Attributes) => void;
   setSelectedObjectIdsRef: (ids: string[]) => void;
+  isProgrammaticSelectionRef: Ref<boolean>;
 }
 
 export type CanvasSelectionCleared  = {
