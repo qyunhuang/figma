@@ -1,7 +1,7 @@
 <template>
   <div 
     class="container"
-    @contextmenu.prevent="openMenu"
+    @contextmenu.prevent="handleRightClick"
   >
     <LeftSideBar 
       :canvasObjects="canvasObjects"
@@ -18,6 +18,10 @@
     <ToolBelt 
       :selectedToolRef="selectedToolRef" 
       :setSelectedToolRef="setSelectedToolRef" 
+    />
+    <ContextMenu
+      ref="contextMenuRef"
+      @select="handleMenuSelect"
     />
   </div>
 </template>
@@ -45,6 +49,7 @@ import {
 } from '@/lib/shape'
 import CanvasContainer from '@/components/CanvasContainer.vue'
 import { OptionType, Attributes } from '@/types/type'
+import ContextMenu from '@/components/ui/ContextMenu.vue'
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const canvasObjects = ref<Record<string, Object>>({})
@@ -69,9 +74,14 @@ const elAttrsRef = ref<Attributes>({
   fontSize: '',
   fontWeight: '',
 })
+const contextMenuRef = ref<InstanceType<typeof ContextMenu> | null>(null)
 
-const openMenu = (e: MouseEvent) => {
-  console.log('openMenu', e)
+const handleRightClick = (event: MouseEvent) => {
+  contextMenuRef.value?.openMenu(event)
+}
+
+const handleMenuSelect = (value: string) => {
+  console.log(value)
 }
 
 const setSelectedToolRef = (shape: OptionType) => {
