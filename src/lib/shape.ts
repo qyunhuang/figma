@@ -141,7 +141,7 @@ export const loadCanvasFromStorage = () => {
   if (storedData) {
     return JSON.parse(storedData)
   }
-  return null
+  return {}
 }  
 
 export const loadObjectsToCanvas = (canvas: fabric.Canvas, objectData: any) => {
