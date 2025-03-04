@@ -78,6 +78,7 @@ const setElAttrsRef = (attrs: Attributes) => {
 const setSelectedObjectIdsRef = (ids: string[]) => {
   if (!fabricRef.value) return
   selectedObjectIdsRef.value = ids
+  setSelectedToolRef('move')
   handleCanvasObjectSelected({ canvas: fabricRef.value, objectIds: ids, isProgrammaticSelectionRef })
 }
 
