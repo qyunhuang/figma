@@ -14,8 +14,8 @@
           <component 
             :is="getShapeInfo(($props.canvasObjects[objectId] as any).type).icon" 
             :size="12" 
-            :stroke-width="1"
-            color="#ababab"
+            :stroke-width="2"
+            :color="getIconColor(objectId)"
           />
         </div>
         <div class="text-[12px]">
@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { Square, Slash, Circle, Triangle, Type, Spline } from 'lucide-vue-next'
+import { Square, Slash, Circle, Triangle, Type, Spline, SquareDashed } from 'lucide-vue-next'
 
 const props = defineProps<{
   canvasObjects: Record<string, Object>;
@@ -42,6 +42,16 @@ const handleSelectObject = (objectId: string) => {
   } else {
     // props.setSelectedObjectIds([...props.selectedObjectIds, objectId])
     props.setSelectedObjectIds([objectId])
+  }
+}
+
+const getIconColor = (objectId: string) => {
+  const object = props.canvasObjects[objectId] as any
+  const type = object.type
+  if (type === 'group' || props.selectedObjectIds.includes(objectId)) {
+    return '#000'
+  } else {
+    return '#ababab'
   }
 }
 
@@ -81,6 +91,12 @@ const getShapeInfo = (shapeType: string) => {
       return {
         icon: Spline,
         name: "Path",
+      }
+    
+    case "group":
+      return {
+        icon: SquareDashed,
+        name: "Group",
       }
 
     default:
