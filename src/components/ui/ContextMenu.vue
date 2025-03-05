@@ -17,8 +17,8 @@
 
 <script setup lang="ts">
 const menuItems = ref([
-  { label: 'Group selection', value: '1' },
-  { label: 'Ungroup', value: '2' },
+  { label: 'Group selection', value: 'group' },
+  { label: 'Ungroup', value: 'ungroup' },
 ])
 
 const emit = defineEmits(['select'])

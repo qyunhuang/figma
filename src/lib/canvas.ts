@@ -1,20 +1,21 @@
 import { fabric } from 'fabric'
 import { Ref } from 'vue'
-import { 
-  CanvasMouseMoveDown, 
-  CanvasMouseMove, 
-  CanvasMouseMoveUp, 
-  CanvasSelectionCreated, 
+import {
+  CanvasMouseMoveDown,
+  CanvasMouseMove,
+  CanvasMouseMoveUp,
+  CanvasSelectionCreated,
   CanvasObjectMoving,
-  CanvasObjectScaling, 
+  CanvasObjectScaling,
   CanvasSelectionCleared,
   CanvasPathCreated,
   CanvasObjectModified,
   CanvasObjectSelected,
   CanvasObjectDeleted,
+  CanvasObjectGrouped,
 } from '@/types/type'
-import { createSpecificShape } from './shape'
-import { v4 as uuid4 } from "uuid"
+import { createSpecificShape, createGroup } from './shape'
+import { v4 as uuidv4 } from "uuid"
 
 const mixedAttributes = {
   left: 'Mixed',
@@ -172,6 +173,7 @@ export const handleCanvasSelectionCreated = ({
   setSelectedObjectIdsRef(selectedIds)
 
   const selectedEl = options?.selected[0] as fabric.Object
+  console.log(selectedEl)
   if (selectedEl && options.selected.length === 1) {
     const scaledWidth = selectedEl?.scaleX
       ? selectedEl?.width! * selectedEl?.scaleX
@@ -219,7 +221,7 @@ export const handleCanvasPathCreated = ({
   if (!path) return
 
   path.set({
-    objectId: uuid4(),
+    objectId: uuidv4(),
   })
 
   syncShapeInStorage(path)
@@ -256,7 +258,7 @@ export const handleCanvasObjectScaling = ({
   setElAttrsRef,
 }: CanvasObjectScaling) => {
   if (!options.target) return
-  
+
   const activeObjects = canvas.getActiveObjects()
   if (activeObjects.length > 1) {
     setElAttrsRef(mixedAttributes)
@@ -330,4 +332,29 @@ export const handleCanvasObjectDeleted = ({
     })
   }
   canvas.renderAll()
+}
+
+export const handleCanvasObjectsGrouped = ({
+  canvas,
+  syncShapeInStorage,
+  deleteShapeInStorage,
+}: CanvasObjectGrouped) => {
+  const activeObjects = canvas.getActiveObjects()
+  if (activeObjects.length > 1) {
+    const left = Math.min(...activeObjects.map((obj: any) => obj!.group.left))
+    const top = Math.min(...activeObjects.map((obj: any) => obj.group.top))
+    // 复制对象
+    const group = createGroup(activeObjects.map(obj => fabric.util.object.clone(obj)), left, top)
+    canvas.add(group)
+    syncShapeInStorage(group)
+
+    canvas.discardActiveObject()
+    canvas.remove(...activeObjects)
+    activeObjects.forEach((obj) => {
+      deleteShapeInStorage((obj as any)?.objectId)
+    })
+
+    canvas.setActiveObject(group)
+    canvas.renderAll()
+  }
 }

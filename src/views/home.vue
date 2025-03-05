@@ -42,6 +42,7 @@ import {
   handleCanvasObjectModified,
   handleCanvasObjectSelected,
   handleCanvasObjectDeleted,
+  handleCanvasObjectsGrouped,
 } from '@/lib/canvas'
 import {  
   loadCanvasFromStorage,
@@ -81,7 +82,10 @@ const handleRightClick = (event: MouseEvent) => {
 }
 
 const handleMenuSelect = (value: string) => {
-  console.log(value)
+  if (!fabricRef.value) return
+  if (value === 'group') {
+    handleCanvasObjectsGrouped({ canvas: fabricRef.value, syncShapeInStorage, deleteShapeInStorage })
+  }
 }
 
 const setSelectedToolRef = (shape: OptionType) => {

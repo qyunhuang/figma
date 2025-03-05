@@ -70,8 +70,18 @@ export type CanvasObjectDeleted = {
   deleteShapeInStorage: (ids: string) => void;
 }
 
+export type CanvasObjectGrouped = {
+  canvas: fabric.Canvas;
+  syncShapeInStorage: (shape: fabric.Object) => void;
+  deleteShapeInStorage: (ids: string) => void;
+}
+
 export interface CustomFabricObject<T extends fabric.Object>
   extends fabric.Object {
+  objectId?: string;
+}
+
+export interface CustomFabricGroup extends fabric.Group {
   objectId?: string;
 }
 

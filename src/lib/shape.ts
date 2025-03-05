@@ -1,6 +1,6 @@
 import { fabric } from "fabric"
 import { v4 as uuidv4 } from "uuid"
-import { CustomFabricObject, ModifyShape } from "@/types/type"
+import { CustomFabricObject, CustomFabricGroup, ModifyShape } from "@/types/type"
 import chroma from 'chroma-js'
 
 export const createSpecificShape = (
@@ -77,6 +77,14 @@ export const createText = (pointer: PointerEvent, text: string) => {
     fontWeight: "400",
     objectId: uuidv4()
   } as fabric.ITextOptions)
+}
+
+export const createGroup = (objects: fabric.Object[], left: number, right: number) => {
+  return new fabric.Group(objects, {
+    left,
+    top: right,
+    objectId: uuidv4()
+  } as CustomFabricGroup)
 }
 
 const formatPropertyVlaue = (property: string, value: any) => {
