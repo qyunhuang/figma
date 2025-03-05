@@ -80,6 +80,7 @@ const elAttrsRef = ref<Attributes>({
 const contextMenuRef = ref<InstanceType<typeof ContextMenu> | null>(null)
 
 const handleRightClick = (event: MouseEvent) => {
+  if (!fabricRef.value || fabricRef.value.getActiveObjects().length < 1) return
   contextMenuRef.value?.openMenu(event)
 }
 

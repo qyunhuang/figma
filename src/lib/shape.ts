@@ -79,11 +79,11 @@ export const createText = (pointer: PointerEvent, text: string) => {
   } as fabric.ITextOptions)
 }
 
-export const createGroup = (objects: fabric.Object[], left: number, right: number) => {
+export const createGroup = (objects: fabric.Object[], left: number, top: number, objectId?: string) => {
   return new fabric.Group(objects, {
     left,
-    top: right,
-    objectId: uuidv4()
+    top,
+    objectId: objectId || uuidv4()
   } as CustomFabricGroup)
 }
 

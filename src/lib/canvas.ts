@@ -342,21 +342,31 @@ export const handleCanvasObjectsGrouped = ({
   syncShapeInStorage,
   deleteShapeInStorage,
 }: CanvasObjectGrouped) => {
-  const activeObjects = canvas.getActiveObjects()
+  const activeObjects = canvas.getActiveObjects();
   if (activeObjects.length > 1) {
     const left = Math.min(...activeObjects.map((obj: any) => obj.group.left))
     const top = Math.min(...activeObjects.map((obj: any) => obj.group.top))
-    // 复制对象
-    const group = createGroup(
-      activeObjects.map((obj: any) => {
+
+    // 复制对象并处理组的情况
+    const clonedObjects = activeObjects.map((obj: any) => {
+      if (obj.type === 'group') {
+        return createGroup(
+          obj.getObjects().map((child: any) => fabric.util.object.clone(child)), 
+          obj.left,
+          obj.top,
+          obj.objectId
+        )
+      } else {
+        // 如果是普通对象，直接克隆
         return {
           ...fabric.util.object.clone(obj),
           objectId: obj.objectId,
         }
-      }), 
-      left, 
-      top,
-    )
+      }
+    })
+
+    const group = createGroup(clonedObjects, left, top)
+
     canvas.add(group)
     syncShapeInStorage(group)
 
@@ -386,6 +396,7 @@ export const handleCanvasObjectsUngrouped = ({
     deleteShapeInStorage((group as any)?.objectId)
 
     objects.forEach((obj: any) => {
+      console.log(obj)
       canvas.add(obj)
       syncShapeInStorage(obj)
     })
