@@ -366,6 +366,7 @@ export const handleCanvasObjectsGrouped = ({
     })
 
     const group = createGroup(clonedObjects, left, top)
+    console.log(group)
 
     canvas.add(group)
     syncShapeInStorage(group)
@@ -396,7 +397,6 @@ export const handleCanvasObjectsUngrouped = ({
     deleteShapeInStorage((group as any)?.objectId)
 
     objects.forEach((obj: any) => {
-      console.log(obj)
       canvas.add(obj)
       syncShapeInStorage(obj)
     })

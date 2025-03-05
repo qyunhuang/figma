@@ -114,12 +114,22 @@ watch(() => selectedToolRef.value, (shape) => {
   }
 })
 
+const addObjectIdToGroupObjects = (object: fabric.Object, shapeData: any) => {
+  if (!object) return
+  if (object.type === 'group') {
+    (object as fabric.Group).getObjects().forEach((obj: any, index: number) => {
+      addObjectIdToGroupObjects(obj, shapeData.objects[index])
+    })
+  } 
+  shapeData.objectId = (object as any).objectId
+}
+
 const syncShapeInStorage = (object: fabric.Object) => {
   if (!object) return
   const { objectId } = object as any
 
   const shapeData: any = object.toJSON()
-  shapeData.objectId = objectId
+  addObjectIdToGroupObjects(object, shapeData)
 
   canvasObjects.value[objectId] = shapeData
 
