@@ -7,6 +7,15 @@
       ]"
       @click.stop="handleItemClick"
     >
+      <div
+        @click.stop="toggleExpand"
+      >
+        <ChevronRight 
+          :size="12" 
+          :class="{ 'rotated': isExpanded }"
+          :color="$props.object.type === 'group' ? '#ababab' : '#fff'"
+        />
+      </div>
       <div>
         <component 
           :is="getShapeInfo(object.type).icon" 
@@ -17,16 +26,6 @@
       </div>
       <div class="text-[12px] flex-1">
         {{ getShapeInfo(object.type).name }}
-      </div>
-      <div 
-        v-if="object.type === 'group'"
-        class="expand-icon"
-        @click.stop="toggleExpand"
-      >
-        <ChevronRight 
-          :size="12" 
-          :class="{ 'rotated': isExpanded }"
-        />
       </div>
     </div>
     <div v-if="object.type === 'group' && isExpanded" class="nested-items">
@@ -55,6 +54,10 @@ const isExpanded = ref(false)
 const isSelected = computed(() => 
   props.selectedObjectIds.includes(props.object.objectId)
 )
+
+// const iconOpacity = computed(() => {
+//   return props.object.type ? 1 : 0.5
+// })
 
 const handleItemClick = () => {
   props.setSelectedObjectIds([props.object.objectId])
@@ -88,6 +91,7 @@ const getShapeInfo = (shapeType: string) => {
 
 <style lang="less" scoped>
 .shape-item {
+  margin-top: 8px;
   display: flex;
   align-items: center;
   gap: 8px;

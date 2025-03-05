@@ -1,9 +1,9 @@
 <template>
   <div class="left-side-bar">
-    <div class="py-4 px-4 font-medium text-[12px]">
+    <div class="pt-4 pb-2 px-4 font-medium text-[12px]">
       Layers
     </div>
-    <div class="flex flex-col px-4 gap-2">
+    <div class="flex flex-col px-3">
       <LayerItem
         v-for="objectId in Object.keys($props.canvasObjects)"
         :key="objectId"
