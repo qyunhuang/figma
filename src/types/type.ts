@@ -86,6 +86,7 @@ export interface CustomFabricGroup extends fabric.Group {
 }
 
 export type Attributes = {
+  type: string;
   left: string;
   top: string;
   width: string;

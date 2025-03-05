@@ -18,6 +18,7 @@ import { createSpecificShape, createGroup } from './shape'
 import { v4 as uuidv4 } from "uuid"
 
 const mixedAttributes = {
+  type: 'Mixed',
   left: 'Mixed',
   top: 'Mixed',
   width: 'Mixed',
@@ -32,6 +33,7 @@ const mixedAttributes = {
 }
 
 const defaultAttributes = {
+  type: '',
   left: '',
   top: '',
   width: '',
@@ -184,13 +186,14 @@ export const handleCanvasSelectionCreated = ({
       : selectedEl?.height
 
     setElAttrsRef({
+      type: selectedEl?.type || '',
       left: selectedEl.left?.toFixed(0).toString() || '',
       top: selectedEl.top?.toFixed(0).toString() || '',
       width: scaledWidth?.toFixed(0).toString() || '',
       height: scaledHeight?.toFixed(0).toString() || '',
       angle: selectedEl.angle?.toFixed(0).toString() || '',
-      fill: selectedEl.fill?.toString() || '',
-      opacity: selectedEl.opacity?.toString() || '',
+      fill: selectedEl?.type === 'group' ? 'Mixed' : (selectedEl.fill?.toString() || ''),
+      opacity: selectedEl?.type === 'group' ? 'Mixed' : (selectedEl.opacity?.toString() || ''),
       stroke: selectedEl.stroke?.toString() || '',
       strokeWidth: selectedEl.strokeWidth?.toString() || '',
       // @ts-ignore
@@ -341,10 +344,19 @@ export const handleCanvasObjectsGrouped = ({
 }: CanvasObjectGrouped) => {
   const activeObjects = canvas.getActiveObjects()
   if (activeObjects.length > 1) {
-    const left = Math.min(...activeObjects.map((obj: any) => obj!.group.left))
+    const left = Math.min(...activeObjects.map((obj: any) => obj.group.left))
     const top = Math.min(...activeObjects.map((obj: any) => obj.group.top))
     // 复制对象
-    const group = createGroup(activeObjects.map(obj => fabric.util.object.clone(obj)), left, top)
+    const group = createGroup(
+      activeObjects.map((obj: any) => {
+        return {
+          ...fabric.util.object.clone(obj),
+          objectId: obj.objectId,
+        }
+      }), 
+      left, 
+      top,
+    )
     canvas.add(group)
     syncShapeInStorage(group)
 
@@ -355,6 +367,30 @@ export const handleCanvasObjectsGrouped = ({
     })
 
     canvas.setActiveObject(group)
+    canvas.renderAll()
+  }
+}
+
+export const handleCanvasObjectsUngrouped = ({
+  canvas,
+  syncShapeInStorage,
+  deleteShapeInStorage,
+}: CanvasObjectGrouped) => {
+  const activeObjects = canvas.getActiveObjects()
+  if (activeObjects.length === 1 && activeObjects[0].type === 'group') {
+    const group = activeObjects[0] as fabric.Group
+    const objects = group.getObjects()
+
+    group.destroy()
+    canvas.remove(group)
+    deleteShapeInStorage((group as any)?.objectId)
+
+    objects.forEach((obj: any) => {
+      canvas.add(obj)
+      syncShapeInStorage(obj)
+    })
+
+    canvas.discardActiveObject()
     canvas.renderAll()
   }
 }

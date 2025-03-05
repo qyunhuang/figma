@@ -43,6 +43,7 @@ import {
   handleCanvasObjectSelected,
   handleCanvasObjectDeleted,
   handleCanvasObjectsGrouped,
+  handleCanvasObjectsUngrouped,
 } from '@/lib/canvas'
 import {  
   loadCanvasFromStorage,
@@ -61,8 +62,9 @@ const startPointRef = ref<{ x: number; y: number } | null>(null)
 const isDraggingRef = ref<boolean>(false)
 const lastPositionRef = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const selectedObjectIdsRef = ref<string[]>([])
-const isProgrammaticSelectionRef = ref<boolean>(false)
+const isProgrammaticSelectionRef = ref<boolean>(true)
 const elAttrsRef = ref<Attributes>({
+  type: '',
   left: '',
   top: '',
   width: '',
@@ -85,6 +87,8 @@ const handleMenuSelect = (value: string) => {
   if (!fabricRef.value) return
   if (value === 'group') {
     handleCanvasObjectsGrouped({ canvas: fabricRef.value, syncShapeInStorage, deleteShapeInStorage })
+  } else if (value === 'ungroup') {
+    handleCanvasObjectsUngrouped({ canvas: fabricRef.value, syncShapeInStorage, deleteShapeInStorage })
   }
 }
 
