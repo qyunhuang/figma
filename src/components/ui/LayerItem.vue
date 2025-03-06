@@ -1,11 +1,7 @@
 <template>
   <div>
     <div 
-      :class="[
-        'shape-item',
-        { 'selected': isSelected }
-      ]"
-      @click.stop="handleItemClick"
+      class="shape-item"
     >
       <div
         @click.stop="toggleExpand"
@@ -13,7 +9,7 @@
         <ChevronRight 
           :size="12" 
           :class="{ 'rotated': isExpanded }"
-          :color="$props.object.type === 'group' ? '#ababab' : '#fff'"
+          :color="$props.object.type === 'group' ? '#ababab' : '#fff0'"
         />
       </div>
       <div>
@@ -34,7 +30,7 @@
         :key="subObject.objectId"
         :object="subObject"
         :selected-object-ids="selectedObjectIds"
-        :set-selected-object-ids="setSelectedObjectIds"
+        :grouped="true"
       />
     </div>
   </div>
@@ -46,7 +42,7 @@ import { Square, Slash, Circle, Triangle, Type, Spline, SquareDashed, ChevronRig
 const props = defineProps<{
   object: any;
   selectedObjectIds: string[];
-  setSelectedObjectIds: (ids: string[]) => void;
+  grouped: boolean;
 }>()
 
 const isExpanded = ref(false)
@@ -55,24 +51,12 @@ const isSelected = computed(() =>
   props.selectedObjectIds.includes(props.object.objectId)
 )
 
-// const iconOpacity = computed(() => {
-//   return props.object.type ? 1 : 0.5
-// })
-
-const handleItemClick = () => {
-  props.setSelectedObjectIds([props.object.objectId])
-}
-
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value
 }
 
 const getIconColor = computed(() => {
-  const type = props.object.type
-  if (type === 'group' || isSelected.value) {
-    return '#000'
-  }
-  return '#ababab'
+  return isSelected.value ? '#000' : '#ababab'
 })
 
 const getShapeInfo = (shapeType: string) => {
@@ -91,20 +75,11 @@ const getShapeInfo = (shapeType: string) => {
 
 <style lang="less" scoped>
 .shape-item {
-  margin-top: 8px;
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 4px 4px;
-  border-radius: 6px;
-
-  &:hover {
-    background-color: #f5f5f5;
-  }
-
-  &.selected {
-    background-color: #e5f4ff;
-  }
+  cursor: default;
 }
 
 .nested-items {

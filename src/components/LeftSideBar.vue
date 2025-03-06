@@ -9,7 +9,9 @@
         :key="objectId"
         :object="$props.canvasObjects[objectId]"
         :selected-object-ids="$props.selectedObjectIds"
-        :set-selected-object-ids="$props.setSelectedObjectIds"
+        :class="[{ 'selected': selectedObjectIds.includes(objectId) }, 'layer-item']"
+        :grouped="false"
+        @click="handleItemClick(objectId)"
       />
     </div>
   </div>
@@ -18,11 +20,15 @@
 <script setup lang="ts">
 import LayerItem from './ui/LayerItem.vue';
 
-defineProps<{
+const props = defineProps<{
   canvasObjects: Record<string, Object>;
   selectedObjectIds: string[];
   setSelectedObjectIds: (ids: string[]) => void;
 }>()
+
+const handleItemClick = (objectId: string) => {
+  props.setSelectedObjectIds([objectId])
+}
 </script>
 
 <style lang="less" scoped>
@@ -31,18 +37,19 @@ defineProps<{
   width: 250px;
 }
 
-.shape-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 4px;
+.layer-item {
   border-radius: 6px;
+  margin-top: 8px;
 
   &:hover {
     background-color: #f5f5f5;
   }
+}
 
-  &.selected {
+.selected {
+  background-color: #e5f4ff;
+
+  &:hover {
     background-color: #e5f4ff;
   }
 }
