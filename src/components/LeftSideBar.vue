@@ -7,10 +7,12 @@
       <LayerItem
         v-for="objectId in Object.keys($props.canvasObjects)"
         :key="objectId"
+        :fabric="$props.fabric" 
         :object="$props.canvasObjects[objectId]"
         :selected-object-ids="$props.selectedObjectIds"
         :class="[{ 'selected': selectedObjectIds.includes(objectId) }, 'layer-item']"
         :grouped="false"
+        :visibility="$props.canvasObjects[objectId].visible"
         @click="handleItemClick(objectId)"
       />
     </div>
@@ -21,7 +23,8 @@
 import LayerItem from './ui/LayerItem.vue';
 
 const props = defineProps<{
-  canvasObjects: Record<string, Object>;
+  fabric: fabric.Canvas | null;
+  canvasObjects: Record<string, any>;
   selectedObjectIds: string[];
   setSelectedObjectIds: (ids: string[]) => void;
 }>()

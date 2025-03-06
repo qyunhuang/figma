@@ -145,7 +145,7 @@ import { modifyShape, toUpperCaseString, toPercentage } from '@/lib/shape'
 import { fontWeightOptions, fontSizeOptions } from '@/constants'
 
 const props = defineProps<{
-  fabric: fabric.Canvas | null
+  fabric: fabric.Canvas | null;
   elAttrs: Attributes;
   setElAttrs: (attrs: Attributes) => void;
   syncShapeInStorage: (object: fabric.Object) => void;

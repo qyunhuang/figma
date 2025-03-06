@@ -1,6 +1,6 @@
 import { fabric } from "fabric"
 import { v4 as uuidv4 } from "uuid"
-import { CustomFabricObject, CustomFabricGroup, ModifyShape } from "@/types/type"
+import { CustomFabricObject, CustomFabricGroup, ModifyShape, ModifyVisibility } from "@/types/type"
 import chroma from 'chroma-js'
 
 export const createSpecificShape = (
@@ -144,6 +144,20 @@ export const modifyShape = ({
   syncShapeInStorage(selectedElement)
 }
 
+export const modifyVisibility = ({
+  canvas,
+  objectId,
+}: ModifyVisibility) => {
+  if (!canvas) return
+  const selectedElement = canvas.getObjects().find((obj: any) => obj.objectId === objectId)
+
+  if (!selectedElement) return
+
+  selectedElement.visible = !selectedElement.visible
+  modifyShapeInStorage(objectId, 'visible', selectedElement.visible)
+  canvas.renderAll()
+}
+
 export const loadCanvasFromStorage = () => {
   const storedData = localStorage.getItem('canvasObjects')
   if (storedData) {
@@ -151,6 +165,15 @@ export const loadCanvasFromStorage = () => {
   }
   return {}
 }  
+
+export const modifyShapeInStorage = (objectId: string, property: string, value: any) => {
+  const storedData = loadCanvasFromStorage()
+  if (!storedData[objectId]) return
+
+  storedData[objectId][property] = value
+
+  localStorage.setItem('canvasObjects', JSON.stringify(storedData))
+}
 
 export const loadObjectsToCanvas = (canvas: fabric.Canvas, objectData: any) => {
   fabric.util.enlivenObjects(objectData, (enlivenedObjects: fabric.Object[]) => {

@@ -20,29 +20,43 @@
           :color="getIconColor"
         />
       </div>
-      <div class="text-[12px] flex-1">
+      <div class="type-text">
         {{ getShapeInfo(object.type).name }}
+      </div>
+      <div class="icon-container">
+        <component 
+          v-if="!props.grouped"
+          :is="$props.visibility ? Eye : EyeClosed" 
+          :size="12" 
+          :stroke-width="2"
+          @click.stop="handleChangeVisibility(object.objectId)"
+        />
       </div>
     </div>
     <div v-if="object.type === 'group' && isExpanded" class="nested-items">
       <LayerItem
         v-for="subObject in object.objects"
         :key="subObject.objectId"
+        :fabric="fabric"
         :object="subObject"
         :selected-object-ids="selectedObjectIds"
         :grouped="true"
+        :visibility="object.visible"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Square, Slash, Circle, Triangle, Type, Spline, SquareDashed, ChevronRight } from 'lucide-vue-next'
+import { Square, Slash, Circle, Triangle, Type, Spline, SquareDashed, ChevronRight, Eye, EyeClosed } from 'lucide-vue-next'
+import { modifyVisibility } from '@/lib/shape'
 
 const props = defineProps<{
+  fabric: fabric.Canvas | null;
   object: any;
   selectedObjectIds: string[];
   grouped: boolean;
+  visibility: boolean;
 }>()
 
 const isExpanded = ref(false)
@@ -51,8 +65,17 @@ const isSelected = computed(() =>
   props.selectedObjectIds.includes(props.object.objectId)
 )
 
+const textColor = computed(() => 
+  props.visibility ? '#000' : '#ababab'
+)
+
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value
+}
+
+const handleChangeVisibility = (objectId: string) => {
+  props.object.visible = !props.object.visible
+  modifyVisibility({ canvas: props.fabric, objectId })
 }
 
 const getIconColor = computed(() => {
@@ -73,7 +96,8 @@ const getShapeInfo = (shapeType: string) => {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less
+" scoped>
 .shape-item {
   display: flex;
   align-items: center;
@@ -84,9 +108,27 @@ const getShapeInfo = (shapeType: string) => {
 
 .nested-items {
   padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
 }
 .rotated {
   transform: rotate(90deg);
   transition: transform 0.2s ease;
+}
+
+.type-text {
+  font-size: 12px;
+  flex: 1;
+  color: v-bind(textColor);
+}
+
+.shape-item div.icon-container {
+  display: none;
+}
+
+.shape-item:hover div.icon-container {
+  display: block;
 }
 </style>

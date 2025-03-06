@@ -106,3 +106,8 @@ export type ModifyShape = {
   value: any;
   syncShapeInStorage: (shape: fabric.Object) => void;
 }
+
+export type ModifyVisibility = {
+  canvas: fabric.Canvas | null;
+  objectId: string;
+}

@@ -4,6 +4,7 @@
     @contextmenu.prevent="handleRightClick"
   >
     <LeftSideBar 
+      :fabric="fabricRef" 
       :canvasObjects="canvasObjects"
       :selectedObjectIds="selectedObjectIdsRef"
       :setSelectedObjectIds="setSelectedObjectIdsRef"
@@ -54,7 +55,7 @@ import { OptionType, Attributes } from '@/types/type'
 import ContextMenu from '@/components/ui/ContextMenu.vue'
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
-const canvasObjects = ref<Record<string, Object>>({})
+const canvasObjects = ref<Record<string, any>>({})
 const fabricRef = ref<fabric.Canvas | null>(null)
 const shapeRef = ref<fabric.Object | null>(null)
 const selectedToolRef = ref<OptionType>('move')
