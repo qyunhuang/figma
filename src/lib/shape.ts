@@ -1,6 +1,6 @@
 import { fabric } from "fabric"
 import { v4 as uuidv4 } from "uuid"
-import { CustomFabricObject, CustomFabricGroup, ModifyShape, ModifyVisibility } from "@/types/type"
+import { CustomFabricObject, CustomFabricGroup, ModifyShape, ModifyVisibility, ModifySelectablility } from "@/types/type"
 import chroma from 'chroma-js'
 
 export const createSpecificShape = (
@@ -164,6 +164,19 @@ export const modifyVisibility = ({
   if (!selectedElement) return
 
   selectedElement.visible = !selectedElement.visible
+  canvas.renderAll()
+}
+
+export const modifySelectablility = ({
+  canvas,
+  objectId,
+}: ModifySelectablility) => {
+  if (!canvas) return
+  const selectedElement = canvas.getObjects().find((obj: any) => obj.objectId === objectId)
+
+  if (!selectedElement) return
+
+  selectedElement.selectable = !selectedElement.selectable
   canvas.renderAll()
 }
 

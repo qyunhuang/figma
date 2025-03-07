@@ -2,6 +2,8 @@
   <div>
     <div 
       class="shape-item"
+      @mouseenter="isHovered = true"
+      @mouseleave="isHovered = false"
     >
       <div
         @click.stop="toggleExpand"
@@ -23,9 +25,16 @@
       <div class="type-text">
         {{ getShapeInfo(object.type).name }}
       </div>
-      <div class="icon-container">
+      <div class="flex gap-3">
         <component 
-          v-if="!props.grouped"
+          :style="{ visibility: showSelectablility ? 'visible' : 'hidden' }"
+          :is="$props.selectablility ? LockOpen : Lock" 
+          :size="12" 
+          :stroke-width="2"
+          @click.stop="handleChangeSelectablility(object.objectId)"
+        />
+        <component 
+          :style="{ visibility: showVisibility ? 'visible' : 'hidden' }"
           :is="$props.visibility ? Eye : EyeClosed" 
           :size="12" 
           :stroke-width="2"
@@ -42,14 +51,28 @@
         :selected-object-ids="selectedObjectIds"
         :grouped="true"
         :visibility="object.visible"
+        :selectablility="object.selectable"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Square, Slash, Circle, Triangle, Type, Spline, SquareDashed, ChevronRight, Eye, EyeClosed } from 'lucide-vue-next'
-import { modifyVisibility } from '@/lib/shape'
+import { 
+  Square, 
+  Slash, 
+  Circle, 
+  Triangle, 
+  Type, 
+  Spline, 
+  SquareDashed, 
+  ChevronRight, 
+  Eye, 
+  EyeClosed,
+  Lock,
+  LockOpen,
+} from 'lucide-vue-next'
+import { modifyVisibility, modifySelectablility } from '@/lib/shape'
 
 import { useStore } from '@/stores'
 
@@ -61,9 +84,19 @@ const props = defineProps<{
   selectedObjectIds: string[];
   grouped: boolean;
   visibility: boolean;
+  selectablility: boolean;
 }>()
 
 const isExpanded = ref(false)
+const isHovered = ref(false)
+
+const showVisibility = computed(() => 
+  !props.grouped && (isHovered.value || !props.visibility)
+)
+
+const showSelectablility = computed(() => 
+  !props.grouped && (isHovered.value || !props.selectablility)
+)
 
 const isSelected = computed(() => 
   props.selectedObjectIds.includes(props.object.objectId)
@@ -81,6 +114,13 @@ const handleChangeVisibility = (objectId: string) => {
   props.object.visible = !props.object.visible
   modifyVisibility({ canvas: props.fabric, objectId })
   store.modifyShapeInStorage(objectId, 'visible', props.object.visible)
+}
+
+const handleChangeSelectablility = (objectId: string) => {
+  props.object.selectable = !props.object.selectable
+  console.log(props.object.selectable)
+  modifySelectablility({ canvas: props.fabric, objectId })
+  store.modifyShapeInStorage(objectId, 'selectable', props.object.selectable)
 }
 
 const getIconColor = computed(() => {
@@ -129,11 +169,11 @@ const getShapeInfo = (shapeType: string) => {
   color: v-bind(textColor);
 }
 
-.shape-item div.icon-container {
+/* .shape-item div.icon-container {
   display: none;
 }
 
 .shape-item:hover div.icon-container {
   display: block;
-}
+} */
 </style>

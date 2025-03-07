@@ -39,7 +39,7 @@
                   :size="12" 
                   :stroke-width="1" 
                   color="white" 
-                  :style="{ opacity: group.selectedIndex === secondIndex ? 1 : 0 }" 
+                  :style="{ visibility: group.selectedIndex === secondIndex ? 'visible' : 'hidden' }" 
                 />
                 <component 
                   :is="option.icon" 
@@ -126,6 +126,9 @@ function setGroup(index: number) {
   curGroupIndex.value = index
   const curGroup = optionsRef.value[index]
   props.setSelectedToolRef(curGroup.options[curGroup.selectedIndex].type)
+  popoverRefs.value.forEach((popover) => {
+    popover.closePopover()
+  })
 }
 
 function setTool(newTool: string, index: number, secondIndex: number) {

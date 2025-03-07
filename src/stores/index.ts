@@ -22,8 +22,8 @@ export const useStore = defineStore('main', {
     syncShapeInStorage(object: fabric.Object) {
       if (!object) return
       const { objectId } = object as any
-    
-      const shapeData: any = object.toJSON()
+      
+      const shapeData: any = object.toJSON(['selectable'])
       addObjectIdToGroupObjects(object, shapeData)
     
       this.canvasObjects[objectId] = shapeData

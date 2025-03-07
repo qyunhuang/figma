@@ -13,6 +13,7 @@
         :class="[{ 'selected': selectedObjectIds.includes(objectId) }, 'layer-item']"
         :grouped="false"
         :visibility="canvasObjects[objectId].visible"
+        :selectablility="canvasObjects[objectId].selectable"
         @click="handleItemClick(objectId)"
       />
     </div>
