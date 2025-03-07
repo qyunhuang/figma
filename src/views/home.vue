@@ -44,6 +44,8 @@ import {
   handleCanvasObjectDeleted,
   handleCanvasObjectsGrouped,
   handleCanvasObjectsUngrouped,
+  handleCanvasObjectFront,
+  handleCanvasObjectBack,
 } from '@/lib/canvas'
 import { 
   loadObjectsToCanvas
@@ -56,6 +58,8 @@ import ContextMenu from '@/components/ui/ContextMenu.vue'
 const store = useStore()
 const syncShapeInStorage = store.syncShapeInStorage
 const deleteShapeInStorage = store.deleteShapeInStorage
+const frontShapeInStorage = store.frontShapeInStorage
+const backShapeInStorage = store.backShapeInStorage
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const fabricRef = ref<fabric.Canvas | null>(null)
@@ -93,6 +97,10 @@ const handleMenuSelect = (value: string) => {
     handleCanvasObjectsGrouped({ canvas: fabricRef.value, syncShapeInStorage, deleteShapeInStorage })
   } else if (value === 'ungroup') {
     handleCanvasObjectsUngrouped({ canvas: fabricRef.value, syncShapeInStorage, deleteShapeInStorage })
+  } else if (value == 'front') {
+    handleCanvasObjectFront({ canvas: fabricRef.value, frontShapeInStorage })
+  } else if (value === 'back') {
+    handleCanvasObjectBack({ canvas: fabricRef.value, backShapeInStorage })
   }
 }
 
@@ -145,8 +153,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
 
   const storedCanvasObjects = store.loadCanvasFromStorage()
   if (storedCanvasObjects) {
-    const objectsData = Object.values(storedCanvasObjects)
-    loadObjectsToCanvas(canvas, objectsData)
+    loadObjectsToCanvas(canvas, storedCanvasObjects)
   }
 
   // fix this

@@ -76,6 +76,16 @@ export type CanvasObjectGrouped = {
   deleteShapeInStorage: (ids: string) => void;
 }
 
+export type CanvasObjectFront = {
+  canvas: fabric.Canvas;
+  frontShapeInStorage: (objectId: string) => void;
+}
+
+export type CanvasObjectBack = {
+  canvas: fabric.Canvas;
+  backShapeInStorage: (objectId: string) => void;
+}
+
 export interface CustomFabricObject<T extends fabric.Object>
   extends fabric.Object {
   objectId?: string;

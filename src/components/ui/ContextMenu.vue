@@ -17,6 +17,8 @@
 
 <script setup lang="ts">
 const menuItems = ref([
+  { label: 'Bring to front', value: 'front' },
+  { label: 'Send to back', value: 'back' },
   { label: 'Group selection', value: 'group' },
   { label: 'Ungroup', value: 'ungroup' },
 ])
@@ -55,7 +57,6 @@ defineExpose({
 .context-menu {
   position: fixed;
   background-color: #1e1e1e;
-  border: 1px solid #e5e5e5;
   border-radius: 10px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
   z-index: 1000;

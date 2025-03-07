@@ -13,6 +13,8 @@ import {
   CanvasObjectSelected,
   CanvasObjectDeleted,
   CanvasObjectGrouped,
+  CanvasObjectFront,
+  CanvasObjectBack,
 } from '@/types/type'
 import { createSpecificShape, createGroup } from './shape'
 import { v4 as uuidv4 } from "uuid"
@@ -366,7 +368,6 @@ export const handleCanvasObjectsGrouped = ({
     })
 
     const group = createGroup(clonedObjects, left, top)
-    console.log(group)
 
     canvas.add(group)
     syncShapeInStorage(group)
@@ -402,6 +403,32 @@ export const handleCanvasObjectsUngrouped = ({
     })
 
     canvas.discardActiveObject()
+    canvas.renderAll()
+  }
+}
+
+export const handleCanvasObjectFront = ({
+  canvas,
+  frontShapeInStorage,
+}: CanvasObjectFront) => {
+  const activeObjects = canvas.getActiveObjects()
+  if (activeObjects.length === 1) {
+    const obj = activeObjects[0]
+    canvas.bringToFront(obj)
+    frontShapeInStorage((obj as any)?.objectId)
+    canvas.renderAll()
+  }
+}
+
+export const handleCanvasObjectBack = ({
+  canvas,
+  backShapeInStorage,
+}: CanvasObjectBack) => {
+  const activeObjects = canvas.getActiveObjects()
+  if (activeObjects.length === 1) {
+    const obj = activeObjects[0]
+    canvas.sendToBack(obj)
+    backShapeInStorage((obj as any)?.objectId)
     canvas.renderAll()
   }
 }

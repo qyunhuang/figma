@@ -4,11 +4,14 @@ import { addObjectIdToGroupObjects } from '@/lib/shape'
 
 export const useStore = defineStore('main', {
   state: () => ({
-    canvasObjects: <Record<string, any>>{},
+    canvasObjects: <any[]>[],
   }),
   getters: {
     getObjectById: (state) => (objectId: string) => {
-      return state.canvasObjects[objectId]
+      return state.canvasObjects.find((obj) => obj.objectId === objectId)
+    },
+    getIndexById: (state) => (objectId: string) => {
+      return state.canvasObjects.findIndex((obj) => obj.objectId === objectId)
     }
   },
   actions: {
@@ -26,18 +29,37 @@ export const useStore = defineStore('main', {
       const shapeData: any = object.toJSON(['selectable'])
       addObjectIdToGroupObjects(object, shapeData)
     
-      this.canvasObjects[objectId] = shapeData
+      const index = this.getIndexById(objectId)
+      if (index === -1) {
+        this.canvasObjects.push(shapeData)
+      } else {
+        this.canvasObjects[index] = shapeData
+      }
     
       localStorage.setItem('canvasObjects', JSON.stringify(this.canvasObjects))
     },
+    frontShapeInStorage(objectId: string) {
+      const index = this.getIndexById(objectId)
+      if (index === -1) return
+      const object = this.canvasObjects.splice(index, 1)[0]
+      this.canvasObjects.push(object)
+      localStorage.setItem('canvasObjects', JSON.stringify(this.canvasObjects))
+    },
+   backShapeInStorage(objectId: string) {
+      const index = this.getIndexById(objectId)
+      if (index === -1) return
+      const object = this.canvasObjects.splice(index, 1)[0]
+      this.canvasObjects.unshift(object)
+      localStorage.setItem('canvasObjects', JSON.stringify(this.canvasObjects))
+    },
     deleteShapeInStorage(objectId: string) {
-      if (!this.canvasObjects[objectId]) return
-      delete this.canvasObjects[objectId]
+      this.canvasObjects = this.canvasObjects.filter((obj) => obj.objectId !== objectId)
       localStorage.setItem('canvasObjects', JSON.stringify(this.canvasObjects))
     },
     modifyShapeInStorage(objectId: string, property: string, value: any) {
-      if (!this.canvasObjects[objectId]) return
-      this.canvasObjects[objectId][property] = value
+      const index = this.getIndexById(objectId)
+      if (index === -1) return
+      this.canvasObjects[index][property] = value
       localStorage.setItem('canvasObjects', JSON.stringify(this.canvasObjects))
     }
   },

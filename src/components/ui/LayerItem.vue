@@ -118,7 +118,6 @@ const handleChangeVisibility = (objectId: string) => {
 
 const handleChangeSelectablility = (objectId: string) => {
   props.object.selectable = !props.object.selectable
-  console.log(props.object.selectable)
   modifySelectablility({ canvas: props.fabric, objectId })
   store.modifyShapeInStorage(objectId, 'selectable', props.object.selectable)
 }
@@ -168,12 +167,4 @@ const getShapeInfo = (shapeType: string) => {
   flex: 1;
   color: v-bind(textColor);
 }
-
-/* .shape-item div.icon-container {
-  display: none;
-}
-
-.shape-item:hover div.icon-container {
-  display: block;
-} */
 </style>

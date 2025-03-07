@@ -5,15 +5,15 @@
     </div>
     <div class="flex flex-col px-3">
       <LayerItem
-        v-for="objectId in Object.keys(canvasObjects)"
+        v-for="(objectId, index) in canvasObjects.map((obj) => obj.objectId)"
         :key="objectId"
         :fabric="$props.fabric" 
-        :object="canvasObjects[objectId]"
+        :object="canvasObjects[index]"
         :selected-object-ids="$props.selectedObjectIds"
         :class="[{ 'selected': selectedObjectIds.includes(objectId) }, 'layer-item']"
         :grouped="false"
-        :visibility="canvasObjects[objectId].visible"
-        :selectablility="canvasObjects[objectId].selectable"
+        :visibility="canvasObjects[index].visible"
+        :selectablility="canvasObjects[index].selectable"
         @click="handleItemClick(objectId)"
       />
     </div>
@@ -26,7 +26,7 @@ import { useStore } from '@/stores'
 
 const store = useStore()
 
-const canvasObjects = computed(() => store.canvasObjects)
+const canvasObjects = computed(() => store.canvasObjects.toReversed())
 
 const props = defineProps<{
   fabric: fabric.Canvas | null;
