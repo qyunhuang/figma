@@ -5,7 +5,6 @@
   >
     <LeftSideBar 
       :fabric="fabricRef" 
-      :canvasObjects="canvasObjects"
       :selectedObjectIds="selectedObjectIdsRef"
       :setSelectedObjectIds="setSelectedObjectIdsRef"
     />
@@ -46,16 +45,19 @@ import {
   handleCanvasObjectsGrouped,
   handleCanvasObjectsUngrouped,
 } from '@/lib/canvas'
-import {  
-  loadCanvasFromStorage,
+import { 
   loadObjectsToCanvas
 } from '@/lib/shape'
+import { useStore } from '@/stores'
 import CanvasContainer from '@/components/CanvasContainer.vue'
 import { OptionType, Attributes } from '@/types/type'
 import ContextMenu from '@/components/ui/ContextMenu.vue'
 
+const store = useStore()
+const syncShapeInStorage = store.syncShapeInStorage
+const deleteShapeInStorage = store.deleteShapeInStorage
+
 const canvasRef = ref<HTMLCanvasElement | null>(null)
-const canvasObjects = ref<Record<string, any>>({})
 const fabricRef = ref<fabric.Canvas | null>(null)
 const shapeRef = ref<fabric.Object | null>(null)
 const selectedToolRef = ref<OptionType>('move')
@@ -115,34 +117,6 @@ watch(() => selectedToolRef.value, (shape) => {
   }
 })
 
-const addObjectIdToGroupObjects = (object: fabric.Object, shapeData: any) => {
-  if (!object) return
-  if (object.type === 'group') {
-    (object as fabric.Group).getObjects().forEach((obj: any, index: number) => {
-      addObjectIdToGroupObjects(obj, shapeData.objects[index])
-    })
-  } 
-  shapeData.objectId = (object as any).objectId
-}
-
-const syncShapeInStorage = (object: fabric.Object) => {
-  if (!object) return
-  const { objectId } = object as any
-
-  const shapeData: any = object.toJSON()
-  addObjectIdToGroupObjects(object, shapeData)
-
-  canvasObjects.value[objectId] = shapeData
-
-  localStorage.setItem('canvasObjects', JSON.stringify(canvasObjects.value))
-}
-
-const deleteShapeInStorage = (objectId: string) => {
-  if (!objectId) return
-  delete canvasObjects.value[objectId]
-  localStorage.setItem('canvasObjects', JSON.stringify(canvasObjects.value))
-}
-
 // 定义回调函数，接收子组件的 canvasRef
 const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   canvasRef.value = ref
@@ -169,8 +143,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
 
   if (!canvas) return
 
-  const storedCanvasObjects = loadCanvasFromStorage()
-  canvasObjects.value = storedCanvasObjects
+  const storedCanvasObjects = store.loadCanvasFromStorage()
   if (storedCanvasObjects) {
     const objectsData = Object.values(storedCanvasObjects)
     loadObjectsToCanvas(canvas, objectsData)

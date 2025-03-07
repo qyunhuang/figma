@@ -117,6 +117,16 @@ export const toDecimal = (value: string) => {
   return '' + (+value) / 100
 }
 
+export const addObjectIdToGroupObjects = (object: fabric.Object, shapeData: any) => {
+  if (!object) return
+  if (object.type === 'group') {
+    (object as fabric.Group).getObjects().forEach((obj: any, index: number) => {
+      addObjectIdToGroupObjects(obj, shapeData.objects[index])
+    })
+  } 
+  shapeData.objectId = (object as any).objectId
+}
+
 export const modifyShape = ({
   canvas,
   property,
@@ -154,25 +164,7 @@ export const modifyVisibility = ({
   if (!selectedElement) return
 
   selectedElement.visible = !selectedElement.visible
-  modifyShapeInStorage(objectId, 'visible', selectedElement.visible)
   canvas.renderAll()
-}
-
-export const loadCanvasFromStorage = () => {
-  const storedData = localStorage.getItem('canvasObjects')
-  if (storedData) {
-    return JSON.parse(storedData)
-  }
-  return {}
-}  
-
-export const modifyShapeInStorage = (objectId: string, property: string, value: any) => {
-  const storedData = loadCanvasFromStorage()
-  if (!storedData[objectId]) return
-
-  storedData[objectId][property] = value
-
-  localStorage.setItem('canvasObjects', JSON.stringify(storedData))
 }
 
 export const loadObjectsToCanvas = (canvas: fabric.Canvas, objectData: any) => {

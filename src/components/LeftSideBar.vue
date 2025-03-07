@@ -5,14 +5,14 @@
     </div>
     <div class="flex flex-col px-3">
       <LayerItem
-        v-for="objectId in Object.keys($props.canvasObjects)"
+        v-for="objectId in Object.keys(canvasObjects)"
         :key="objectId"
         :fabric="$props.fabric" 
-        :object="$props.canvasObjects[objectId]"
+        :object="canvasObjects[objectId]"
         :selected-object-ids="$props.selectedObjectIds"
         :class="[{ 'selected': selectedObjectIds.includes(objectId) }, 'layer-item']"
         :grouped="false"
-        :visibility="$props.canvasObjects[objectId].visible"
+        :visibility="canvasObjects[objectId].visible"
         @click="handleItemClick(objectId)"
       />
     </div>
@@ -20,11 +20,15 @@
 </template>
 
 <script setup lang="ts">
-import LayerItem from './ui/LayerItem.vue';
+import LayerItem from './ui/LayerItem.vue'
+import { useStore } from '@/stores'
+
+const store = useStore()
+
+const canvasObjects = computed(() => store.canvasObjects)
 
 const props = defineProps<{
   fabric: fabric.Canvas | null;
-  canvasObjects: Record<string, any>;
   selectedObjectIds: string[];
   setSelectedObjectIds: (ids: string[]) => void;
 }>()

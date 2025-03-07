@@ -37,8 +37,8 @@
       <LayerItem
         v-for="subObject in object.objects"
         :key="subObject.objectId"
-        :fabric="fabric"
         :object="subObject"
+        :fabric="fabric"
         :selected-object-ids="selectedObjectIds"
         :grouped="true"
         :visibility="object.visible"
@@ -50,6 +50,10 @@
 <script setup lang="ts">
 import { Square, Slash, Circle, Triangle, Type, Spline, SquareDashed, ChevronRight, Eye, EyeClosed } from 'lucide-vue-next'
 import { modifyVisibility } from '@/lib/shape'
+
+import { useStore } from '@/stores'
+
+const store = useStore()
 
 const props = defineProps<{
   fabric: fabric.Canvas | null;
@@ -76,6 +80,7 @@ const toggleExpand = () => {
 const handleChangeVisibility = (objectId: string) => {
   props.object.visible = !props.object.visible
   modifyVisibility({ canvas: props.fabric, objectId })
+  store.modifyShapeInStorage(objectId, 'visible', props.object.visible)
 }
 
 const getIconColor = computed(() => {
