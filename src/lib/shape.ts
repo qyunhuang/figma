@@ -2,6 +2,8 @@ import { fabric } from "fabric"
 import { v4 as uuidv4 } from "uuid"
 import { CustomFabricObject, CustomFabricGroup, ModifyShape, ModifyVisibility, ModifySelectablility } from "@/types/type"
 import chroma from 'chroma-js'
+import jsPDF from 'jspdf'
+import 'svg2pdf.js'
 
 export const createSpecificShape = (
   shapeType: string,
@@ -187,4 +189,108 @@ export const loadObjectsToCanvas = (canvas: fabric.Canvas, objectData: any) => {
     })
     canvas.renderAll() 
   }, "fabric")
+}
+
+export const exportToPNG = (canvas: fabric.Canvas, pictureType: string) => {
+  const activeObject = canvas.getActiveObject()
+  if (!activeObject) {
+    return
+  }
+
+  const { left, top, width, height } = activeObject.getBoundingRect()
+  const padding = 0
+
+  const dataURL = canvas.toDataURL({
+    format: pictureType,
+    left: left - padding,
+    top: top - padding,
+    width: width + padding * 2,
+    height: height + padding * 2,
+    multiplier: 1
+  })
+
+  const link = document.createElement('a')
+  link.href = dataURL
+  link.download = `element.${pictureType}`
+  link.click()
+}
+
+export const  exportToSVG = (canvas: fabric.Canvas) => {
+  const activeObject = canvas.getActiveObject()
+  if (!activeObject) {
+    return;
+  }
+
+  const svgContent = activeObject.toSVG()
+
+  const { left, top, width, height } = activeObject.getBoundingRect()
+  const padding = 0
+
+  const svgData = `
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="${width + padding * 2}"
+      height="${height + padding * 2}"
+      viewBox="${left - padding} ${top - padding} ${width + padding * 2} ${height + padding * 2}"
+    >
+      ${svgContent}
+    </svg>
+  `
+
+  const blob = new Blob([svgData], { type: 'image/svg+xml' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'element.svg'
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+export const exportToPDF = (canvas: fabric.Canvas) => {
+  const activeObject = canvas.getActiveObject()
+  if (!activeObject) {
+    return
+  }
+
+  const svgContent = activeObject.toSVG()
+
+  const { left, top, width, height } = activeObject.getBoundingRect()
+  const padding = 0
+
+  const svgData = `
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="${width + padding * 2}"
+      height="${height + padding * 2}"
+      viewBox="${left - padding} ${top - padding} ${width + padding * 2} ${height + padding * 2}"
+    >
+      ${svgContent}
+    </svg>
+  `
+
+  const pdf = new jsPDF({
+    orientation: width > height ? 'l' : 'p',
+    unit: 'px',
+    format: [width + padding * 2, height + padding * 2]
+  })
+
+  const svgElement = new DOMParser().parseFromString(svgData, 'image/svg+xml').documentElement
+  pdf.svg(svgElement, {
+    x: padding,
+    y: padding,
+    width: width,
+    height: height
+  }).then(() => {
+    pdf.save('element.pdf')
+  })
+}
+
+export const exportToPicture = (pictureType: string, canvas: fabric.Canvas) => {
+  if (pictureType === 'png' || pictureType === 'jpeg') {
+    exportToPNG(canvas, pictureType)
+  } else if (pictureType === 'svg') {
+    exportToSVG(canvas)
+  } else if (pictureType === 'pdf') {
+    exportToPDF(canvas)
+  }
 }

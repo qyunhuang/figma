@@ -86,3 +86,10 @@ export const fontSizeOptions = [
     label: "36",
   },
 ]
+
+export const exportOptions = [
+  { label: "PNG", value: "png" },
+  { label: "JPEG", value: "jpeg" },
+  { label: "SVG", value: "svg" },
+  { label: "PDF", value: "pdf" },
+]

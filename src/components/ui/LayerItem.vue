@@ -50,8 +50,8 @@
         :fabric="fabric"
         :selected-object-ids="selectedObjectIds"
         :grouped="true"
-        :visibility="object.visible"
-        :selectablility="object.selectable"
+        :visibility="$props.visibility"
+        :selectablility="$props.selectablility"
       />
     </div>
   </div>

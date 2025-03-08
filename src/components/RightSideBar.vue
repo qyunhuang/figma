@@ -131,6 +131,28 @@
         </div>
       </div>
     </div>
+    <div class="block">
+      <div class="py-3 px-4 font-medium text-[12px] layout-block">
+        Export
+      </div>
+      <div v-if="$props.elAttrs.width" class="pb-2 px-4 flex gap-2">
+        <div>
+          <Select
+            :value="selctedExportOption"
+            :options="exportOptions"
+            :handle-change="handleChangeExportOption"
+          />
+        </div>
+        <div 
+          class="export-button"
+          @click="handleClickExport"
+        >
+          <div>
+            Export
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -141,8 +163,8 @@ import StrokeInput from './ui/StrokeInput.vue'
 import Select from './ui/Select.vue'
 import { RotateCw, Square, Plus, AlignJustify, Minus } from 'lucide-vue-next'
 import { Attributes } from '@/types/type'
-import { modifyShape, toUpperCaseString, toPercentage } from '@/lib/shape'
-import { fontWeightOptions, fontSizeOptions } from '@/constants'
+import { modifyShape, toUpperCaseString, toPercentage, exportToPicture } from '@/lib/shape'
+import { fontWeightOptions, fontSizeOptions, exportOptions } from '@/constants'
 
 const props = defineProps<{
   fabric: fabric.Canvas | null;
@@ -150,6 +172,8 @@ const props = defineProps<{
   setElAttrs: (attrs: Attributes) => void;
   syncShapeInStorage: (object: fabric.Object) => void;
 }>()
+
+const selctedExportOption = ref('png')
 
 const getIconColor = (color: string) => {
   return (color === '' || color === 'Mixed') ? '#ababab' : color
@@ -251,6 +275,15 @@ const handleChangeFontSize = (value: string) => {
   handleModifyShape({ property: 'fontSize', value })
 }
 
+const handleChangeExportOption = (value: string) => {
+  selctedExportOption.value = value
+}
+
+const handleClickExport = () => {
+  if (!props.fabric) return
+  exportToPicture(selctedExportOption.value, props.fabric)
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -282,6 +315,17 @@ const handleChangeFontSize = (value: string) => {
   &:hover {
     background-color: #f5f5f5;
   }
+}
+
+.export-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  border: 1px solid #e5e5e5;
+  width: 90px;
+  font-size: 12px;
+  cursor: default;
 }
 
 .stroke-block {
