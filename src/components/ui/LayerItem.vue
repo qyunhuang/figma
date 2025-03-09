@@ -19,7 +19,7 @@
           :is="getShapeInfo(object.type).icon" 
           :size="12" 
           :stroke-width="2"
-          :color="getIconColor"
+          :color="getIconColor(object.type)"
         />
       </div>
       <div class="type-text">
@@ -71,6 +71,7 @@ import {
   EyeClosed,
   Lock,
   LockOpen,
+  Image,
 } from 'lucide-vue-next'
 import { modifyVisibility, modifySelectablility } from '@/lib/shape'
 
@@ -122,9 +123,9 @@ const handleChangeSelectablility = (objectId: string) => {
   store.modifyShapeInStorage(objectId, 'selectable', props.object.selectable)
 }
 
-const getIconColor = computed(() => {
-  return isSelected.value ? '#000' : '#ababab'
-})
+const getIconColor = (type: string) => {
+  return (isSelected.value || type === 'group' || type === 'image') ? '#000' : '#ababab'
+}
 
 const getShapeInfo = (shapeType: string) => {
   switch (shapeType) {
@@ -134,6 +135,7 @@ const getShapeInfo = (shapeType: string) => {
     case "triangle": return { icon: Triangle, name: "Triangle" }
     case "i-text": return { icon: Type, name: "Text" }
     case "path": return { icon: Spline, name: "Path" }
+    case "image": return { icon: Image, name: "Image" }
     case "group": return { icon: SquareDashed, name: "Group" }
     default: return { icon: Square, name: shapeType }
   }

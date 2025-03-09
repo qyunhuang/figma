@@ -61,13 +61,15 @@
 </template>
 
 <script setup lang="ts">
-import { Square, MousePointer2, ChevronDown, Slash, Circle, Triangle, Check, Type, Hand, Pencil } from 'lucide-vue-next'
+import { Square, MousePointer2, ChevronDown, Slash, Circle, Triangle, Check, Type, Hand, Pencil, Image } from 'lucide-vue-next'
 import Popover from '@/components/ui/Popover.vue'
 import { OptionType } from '@/types/type'
 
 const props = defineProps<{
+  fabric: fabric.Canvas | null;
   selectedToolRef: OptionType,
   setSelectedToolRef: (shape: OptionType) => void
+  addImage: (imgUrl: string) => void
 }>()
 
 const popoverRefs = ref<InstanceType<typeof Popover>[]>([])
@@ -104,6 +106,7 @@ const optionsRef = ref<Group[]>([
       { icon: Slash, name: 'Line', type: 'line' },
       { icon: Circle, name: 'Ellipse', type: 'ellipse' },
       { icon: Triangle, name: 'Triangle', type: 'triangle' },
+      { icon: Image, name: 'Image', type: 'image' },
     ],
   },
   {
@@ -132,9 +135,32 @@ function setGroup(index: number) {
 }
 
 function setTool(newTool: string, index: number, secondIndex: number) {
-  curGroupIndex.value = index
-  optionsRef.value[index].selectedIndex = secondIndex
-  props.setSelectedToolRef(newTool as OptionType)
+  if (newTool === 'image') {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'image/*'
+    input.onchange = (e) => {
+      e.preventDefault()
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (!file) return
+      
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const imgUrl = e.target?.result as string
+        if (!props.fabric) return
+        props.addImage(imgUrl)
+      }
+      reader.readAsDataURL(file)
+    }
+    input.click()
+    props.setSelectedToolRef('move')
+
+    input.remove()
+  } else {
+    curGroupIndex.value = index
+    optionsRef.value[index].selectedIndex = secondIndex
+    props.setSelectedToolRef(newTool as OptionType)
+  }
 
   if (popoverRefs.value[index]) {
     popoverRefs.value[index].closePopover()

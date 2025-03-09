@@ -15,6 +15,7 @@ import {
   CanvasObjectGrouped,
   CanvasObjectFront,
   CanvasObjectBack,
+  CanvasAddImage,
 } from '@/types/type'
 import { createSpecificShape, createGroup } from './shape'
 import { v4 as uuidv4 } from "uuid"
@@ -431,4 +432,21 @@ export const handleCanvasObjectBack = ({
     backShapeInStorage((obj as any)?.objectId)
     canvas.renderAll()
   }
+}
+
+export const handleCanvasAddImage = ({
+  canvas,
+  imgUrl,
+  syncShapeInStorage,
+}: CanvasAddImage) => {
+  fabric.Image.fromURL(imgUrl, (img: any) => {
+    img.set({
+      left: 0,
+      top: 0,
+      objectId: uuidv4(),
+    })
+    canvas.add(img)
+    canvas.setActiveObject(img)
+    syncShapeInStorage(img)
+  })
 }

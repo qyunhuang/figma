@@ -1,6 +1,6 @@
 import { Ref } from 'vue'
 
-export type OptionType = 'move' | 'hand' | 'rect' | 'line' | 'ellipse' | 'triangle' | 'pen' | 'pencil' | 'text'
+export type OptionType = 'move' | 'hand' | 'rect' | 'line' | 'ellipse' | 'triangle' | 'pen' | 'pencil' | 'text' | 'image'
 
 export type CanvasMouseMoveDown = {
   options: fabric.IEvent;
@@ -84,6 +84,12 @@ export type CanvasObjectFront = {
 export type CanvasObjectBack = {
   canvas: fabric.Canvas;
   backShapeInStorage: (objectId: string) => void;
+}
+
+export type CanvasAddImage = {
+  canvas: fabric.Canvas;
+  imgUrl: string;
+  syncShapeInStorage: (shape: fabric.Object) => void;
 }
 
 export interface CustomFabricObject<T extends fabric.Object>

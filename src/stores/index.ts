@@ -17,8 +17,17 @@ export const useStore = defineStore('main', {
   actions: {
     loadCanvasFromStorage() {
       const storedData = localStorage.getItem('canvasObjects')
-      if (storedData) {
-        this.canvasObjects = JSON.parse(storedData)
+      if (storedData == null) {
+        this.canvasObjects = []
+        localStorage.setItem('canvasObjects', JSON.stringify(this.canvasObjects))
+        return this.canvasObjects
+      }
+      const storedDataParsed = JSON.parse(storedData)
+      if (Array.isArray(storedDataParsed)) {
+        this.canvasObjects = storedDataParsed
+      } else {
+        this.canvasObjects = []
+        localStorage.setItem('canvasObjects', JSON.stringify(this.canvasObjects))
       }
       return this.canvasObjects
     },

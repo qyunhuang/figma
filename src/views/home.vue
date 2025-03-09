@@ -16,8 +16,10 @@
       :syncShapeInStorage="syncShapeInStorage" 
     />
     <ToolBelt 
+      :fabric="fabricRef" 
       :selectedToolRef="selectedToolRef" 
       :setSelectedToolRef="setSelectedToolRef" 
+      :addImage="addImage"
     />
     <ContextMenu
       ref="contextMenuRef"
@@ -46,6 +48,7 @@ import {
   handleCanvasObjectsUngrouped,
   handleCanvasObjectFront,
   handleCanvasObjectBack,
+  handleCanvasAddImage,
 } from '@/lib/canvas'
 import { 
   loadObjectsToCanvas
@@ -85,6 +88,11 @@ const elAttrsRef = ref<Attributes>({
   fontWeight: '',
 })
 const contextMenuRef = ref<InstanceType<typeof ContextMenu> | null>(null)
+
+const addImage = (imgUrl: string) => {
+  if (!fabricRef.value) return
+  handleCanvasAddImage({ canvas: fabricRef.value, imgUrl, syncShapeInStorage })
+}
 
 const handleRightClick = (event: MouseEvent) => {
   if (!fabricRef.value || fabricRef.value.getActiveObjects().length < 1) return
