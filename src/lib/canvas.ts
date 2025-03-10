@@ -119,35 +119,39 @@ export const handleMouseMove = ({
     shapeRef.value.set({ visible: true })
   }
   const pointer = canvas.getPointer(options.e)
+  // fix this
   switch (selectedToolRef?.value) {
     case "rect":
       shapeRef.value?.set({
         width: pointer.x - (shapeRef.value?.left || 0),
         height: pointer.y - (shapeRef.value?.top || 0),
       })
+      canvas.renderAll()
       break
     case "ellipse":
       (shapeRef.value as fabric.Ellipse)?.set({
         rx: Math.abs(pointer.x - (shapeRef.value?.left || 0)) / 2,
         ry: Math.abs(pointer.y - (shapeRef.value?.top || 0)) / 2,
       })
+      canvas.renderAll()
       break
     case "triangle":
       shapeRef.value?.set({
         width: pointer.x - (shapeRef.value?.left || 0),
         height: pointer.y - (shapeRef.value?.top || 0),
       })
+      canvas.renderAll()
       break
     case "line":
       (shapeRef.value as fabric.Line)?.set({
         x2: pointer.x,
         y2: pointer.y,
       })
+      canvas.renderAll()
       break
     default:
       break
   }
-  canvas.renderAll()
 }
 
 export const handleMouseMoveUp = ({

@@ -30,14 +30,12 @@ export const handlePaste = (
           (enlivenedObjects: fabric.Object[]) => {
             enlivenedObjects.forEach((enlivenedObj) => {
               enlivenedObj.set({
-                left: enlivenedObj.left || 0 + 20,
-                top: enlivenedObj.top || 0 + 20,
                 objectId: uuidv4(),
               } as any)
 
               canvas.add(enlivenedObj)
               syncShapeInStorage(enlivenedObj)
-            });
+            })
             canvas.renderAll()
           },
           "fabric"

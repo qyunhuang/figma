@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { fabric } from 'fabric'
-// import { AlignGuidelines } from "fabric-guideline-plugin"
+import { AlignGuidelines } from "fabric-guideline-plugin"
 import { 
   initializeFabric, 
   handleMouseMoveDown, 
@@ -139,7 +139,6 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
 
   const canvas = initializeFabric({ canvasRef, fabricRef })
 
-
   // 全局样式设置
   fabric.Object.prototype.set({
     borderColor: '#0d99ff',
@@ -165,14 +164,14 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   }
 
   // fix this
-  // const guideline = new AlignGuidelines({
-  //   canvas,
-  //   aligningOptions: {
-  //     lineWidth: 1.3,
-  //   },
-  // })
+  const guideline = new AlignGuidelines({
+    canvas,
+    aligningOptions: {
+      lineWidth: 1.3,
+    },
+  })
 
-  // guideline.init()
+  guideline.init()
 
   canvas.on('mouse:down', (options) => {
     if (selectedToolRef.value === 'hand') {
