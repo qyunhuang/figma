@@ -61,6 +61,8 @@ import { handleKeyDown } from '@/lib/keyEvents'
 const store = useStore()
 const syncShapeInStorage = store.syncShapeInStorage
 const deleteShapeInStorage = store.deleteShapeInStorage
+const undo = store.undo
+const redo = store.redo
 const frontShapeInStorage = store.frontShapeInStorage
 const backShapeInStorage = store.backShapeInStorage
 
@@ -250,7 +252,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   })
 
   window.addEventListener("keydown", (e) => {
-    handleKeyDown({ e, canvas, syncShapeInStorage, deleteShapeInStorage })
+    handleKeyDown({ e, canvas, syncShapeInStorage, deleteShapeInStorage, undo, redo })
   })
 }
 

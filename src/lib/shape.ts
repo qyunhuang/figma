@@ -187,6 +187,11 @@ export const modifySelectablility = ({
 }
 
 export const loadObjectsToCanvas = (canvas: fabric.Canvas, objectData: any) => {
+  canvas.getObjects().forEach((obj) => {
+    canvas.remove(obj)
+    canvas.renderAll()
+  })
+
   fabric.util.enlivenObjects(objectData, (enlivenedObjects: fabric.Object[]) => {
     enlivenedObjects.forEach((obj) => {
       canvas.add(obj)

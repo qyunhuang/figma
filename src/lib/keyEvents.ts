@@ -68,11 +68,15 @@ export const handleKeyDown = ({
   canvas,
   syncShapeInStorage,
   deleteShapeInStorage,
+  undo,
+  redo,
 }: {
   e: KeyboardEvent;
   canvas: fabric.Canvas | any;
   syncShapeInStorage: (shape: fabric.Object) => void;
   deleteShapeInStorage: (id: string) => void;
+  undo: (canvas: fabric.Canvas) => void;
+  redo: (canvas: fabric.Canvas) => void;
 }) => {
   if (e.key === 'Delete') {
     handleDelete(canvas, deleteShapeInStorage)
@@ -89,5 +93,13 @@ export const handleKeyDown = ({
   if ((e?.ctrlKey || e?.metaKey) && e.key === "x") {
     handleCopy(canvas)
     handleDelete(canvas, deleteShapeInStorage)
+  }
+
+  if ((e?.ctrlKey || e?.metaKey) && (e.key === "z" || e.key === "Z")) {
+    if (e.shiftKey) {
+      redo(canvas)
+    } else {
+      undo(canvas)
+    }
   }
 }

@@ -34,7 +34,7 @@
       v-model="inputRawLeftValue" 
       @change="handleColorChange" 
       ref="colorInput" 
-      style="visibility: hidden;"
+      style="visibility: hidden; width: 0; height: 0;"
     />
   </div>
 </template>
