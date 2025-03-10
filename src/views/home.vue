@@ -43,7 +43,6 @@ import {
   handleCanvasPathCreated,
   handleCanvasObjectModified,
   handleCanvasObjectSelected,
-  handleCanvasObjectDeleted,
   handleCanvasObjectsGrouped,
   handleCanvasObjectsUngrouped,
   handleCanvasObjectFront,
@@ -57,6 +56,7 @@ import { useStore } from '@/stores'
 import CanvasContainer from '@/components/CanvasContainer.vue'
 import { OptionType, Attributes } from '@/types/type'
 import ContextMenu from '@/components/ui/ContextMenu.vue'
+import { handleKeyDown } from '@/lib/keyEvents'
 
 const store = useStore()
 const syncShapeInStorage = store.syncShapeInStorage
@@ -251,9 +251,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   })
 
   window.addEventListener("keydown", (e) => {
-    if (e.key === "Delete") {
-      handleCanvasObjectDeleted({ canvas, deleteShapeInStorage })
-    }
+    handleKeyDown({ e, canvas, syncShapeInStorage, deleteShapeInStorage })
   })
 }
 

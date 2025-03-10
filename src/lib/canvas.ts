@@ -11,7 +11,6 @@ import {
   CanvasPathCreated,
   CanvasObjectModified,
   CanvasObjectSelected,
-  CanvasObjectDeleted,
   CanvasObjectGrouped,
   CanvasObjectFront,
   CanvasObjectBack,
@@ -320,22 +319,6 @@ export const handleCanvasObjectSelected = ({
     canvas.setActiveObject(new fabric.ActiveSelection(targetObjects, {
       canvas: canvas,
     }))
-  }
-  canvas.renderAll()
-}
-
-export const handleCanvasObjectDeleted = ({
-  canvas,
-  deleteShapeInStorage,
-}: CanvasObjectDeleted) => {
-  const activeObjects = canvas.getActiveObjects()
-  if (activeObjects.length > 0) {
-    activeObjects.forEach((obj) => {
-      // fix this
-      canvas.remove(obj)
-      canvas.discardActiveObject()
-      deleteShapeInStorage((obj as any)?.objectId)
-    })
   }
   canvas.renderAll()
 }

@@ -65,11 +65,6 @@ export type CanvasObjectSelected = {
   isProgrammaticSelectionRef: Ref<boolean>;
 }
 
-export type CanvasObjectDeleted = {
-  canvas: fabric.Canvas;
-  deleteShapeInStorage: (ids: string) => void;
-}
-
 export type CanvasObjectGrouped = {
   canvas: fabric.Canvas;
   syncShapeInStorage: (shape: fabric.Object) => void;
