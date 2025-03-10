@@ -229,6 +229,7 @@ export const  exportToSVG = (canvas: fabric.Canvas) => {
   const svgData = `
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
       width="${width + padding * 2}"
       height="${height + padding * 2}"
       viewBox="${left - padding} ${top - padding} ${width + padding * 2} ${height + padding * 2}"
@@ -260,6 +261,7 @@ export const exportToPDF = (canvas: fabric.Canvas) => {
   const svgData = `
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
       width="${width + padding * 2}"
       height="${height + padding * 2}"
       viewBox="${left - padding} ${top - padding} ${width + padding * 2} ${height + padding * 2}"

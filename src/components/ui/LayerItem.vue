@@ -142,8 +142,7 @@ const getShapeInfo = (shapeType: string) => {
 }
 </script>
 
-<style lang="less
-" scoped>
+<style lang="less" scoped>
 .shape-item {
   display: flex;
   align-items: center;

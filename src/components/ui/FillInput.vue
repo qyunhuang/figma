@@ -1,7 +1,10 @@
 <template>
   <div class="custom-multi-input">
     <div class="multi-input-container">
-      <div class="left-slot">
+      <div 
+        class="left-slot"
+        @click="openColorPicker"
+      >
         <slot name="left">
           <span>{{ leftText }}</span>
         </slot>
@@ -26,6 +29,13 @@
         </slot>
       </div>
     </div>
+    <input 
+      type="color" 
+      v-model="inputRawLeftValue" 
+      @change="handleColorChange" 
+      ref="colorInput" 
+      style="visibility: hidden;"
+    />
   </div>
 </template>
 
@@ -33,6 +43,7 @@
 import { toHexString, toDecimal } from '@/lib/shape'
 
 const props = defineProps<{
+  rawLeftValue: string;
   leftValue: string;
   rightValue: string;
   leftText: string;
@@ -43,7 +54,9 @@ const props = defineProps<{
 
 const leftInputRef = ref<HTMLInputElement | null>(null)
 const rightInputRef = ref<HTMLInputElement | null>(null)
+const colorInput = ref<HTMLInputElement | null>(null)
 
+const inputRawLeftValue = ref(props.rawLeftValue)
 const inputLeftValue = ref(props.leftValue)
 const inputRightValue = ref(props.rightValue)
 
@@ -60,6 +73,20 @@ watch(
     inputRightValue.value = (newValue)
   }
 )
+
+const openColorPicker = () => {
+  if (colorInput.value) {
+    colorInput.value.click()
+  }
+}
+
+const handleColorChange = () => {
+  if (colorInput.value) {
+    console.log(colorInput.value.value)
+    inputRawLeftValue.value = colorInput.value.value
+    props.handleLeftChange(inputRawLeftValue.value)
+  }
+}
 
 const handleLeftConfirm = () => {
   props.handleLeftChange(toHexString(inputLeftValue.value))

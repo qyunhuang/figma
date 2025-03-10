@@ -440,6 +440,7 @@ export const handleCanvasAddImage = ({
   syncShapeInStorage,
 }: CanvasAddImage) => {
   fabric.Image.fromURL(imgUrl, (img: any) => {
+    // fix this
     img.set({
       left: 0,
       top: 0,
@@ -447,6 +448,7 @@ export const handleCanvasAddImage = ({
     })
     canvas.add(img)
     canvas.setActiveObject(img)
+    canvas.renderAll()
     syncShapeInStorage(img)
   })
 }

@@ -79,6 +79,7 @@
         <FillInput
           left-text=""
           right-text="%"
+          :raw-left-value="$props.elAttrs.fill"
           :left-value="toUpperCaseString($props.elAttrs.fill)"
           :right-value="toPercentage($props.elAttrs.opacity)"
           :handle-left-change="handleChangeFill"
@@ -106,6 +107,7 @@
       <div v-if="$props.elAttrs.stroke && $props.elAttrs.stroke !== 'Mixed'" class="pb-2 px-4 flex gap-2">
         <StrokeInput
           left-text=""
+          :raw-value="$props.elAttrs.stroke"
           :value="toUpperCaseString($props.elAttrs.stroke)"
           :handle-change="handleChangeStroke"
         >

@@ -1,7 +1,10 @@
 <template>
   <div class="custom-input">
     <div class="input-container">
-      <div class="left-slot">
+      <div 
+        class="left-slot"
+        @click="openColorPicker"
+      >
         <slot name="left">
           <span>{{ leftText }}</span>
         </slot>
@@ -14,6 +17,13 @@
         @keydown.enter="handleEnter"
       />
     </div>
+    <input 
+      type="color" 
+      v-model="inputRawValue" 
+      @change="handleColorChange" 
+      ref="colorInput" 
+      style="visibility: hidden;"
+    />
   </div>
 </template>
 
@@ -21,14 +31,30 @@
 import { toHexString } from '@/lib/shape';
 
 const props = defineProps<{
+  rawValue: string;
   value: string;
   leftText: string;
   handleChange: (value: string) => void;
 }>()
 
 const inputRef = ref<HTMLInputElement | null>(null)
+  const colorInput = ref<HTMLInputElement | null>(null)
 
+const inputRawValue = ref(props.rawValue)
 const inputValue = ref(props.value)
+
+const openColorPicker = () => {
+  if (colorInput.value) {
+    colorInput.value.click()
+  }
+}
+
+const handleColorChange = () => {
+  if (colorInput.value) {
+    inputRawValue.value = colorInput.value.value
+    props.handleChange(inputRawValue.value)
+  }
+}
 
 watch(
   () => props.value,
