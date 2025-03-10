@@ -77,6 +77,8 @@ export const createText = (pointer: PointerEvent, text: string) => {
     fontFamily: "Helvetica",
     fontSize: 16,
     fontWeight: "400",
+    lockScalingX: true,
+    lockScalingY: true,
     objectId: uuidv4()
   } as fabric.ITextOptions)
 }
@@ -152,6 +154,8 @@ export const modifyShape = ({
     if (selectedElement[property as keyof object] === value) return
     selectedElement.set(property as keyof object, value)
   }
+
+  canvas.renderAll()
 
   syncShapeInStorage(selectedElement)
 }

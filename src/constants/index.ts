@@ -34,56 +34,64 @@ export const fontSizeOptions = [
     label: "10",
   },
   {
+    value: "11",
+    label: "11",
+  },
+  {
     value: "12",
     label: "12",
+  },
+  {
+    value: "13",
+    label: "13",
   },
   {
     value: "14",
     label: "14",
   },
   {
-    value: "16",
-    label: "16",
+    value: "15",
+    label: "15",
   },
   {
-    value: "18",
-    label: "18",
+    value: "16",
+    label: "16",
   },
   {
     value: "20",
     label: "20",
   },
   {
-    value: "22",
-    label: "22",
-  },
-  {
     value: "24",
     label: "24",
-  },
-  {
-    value: "26",
-    label: "26",
-  },
-  {
-    value: "28",
-    label: "28",
-  },
-  {
-    value: "30",
-    label: "30",
   },
   {
     value: "32",
     label: "32",
   },
   {
-    value: "34",
-    label: "34",
-  },
-  {
     value: "36",
     label: "36",
+  },
+  {
+    value: "40",
+    label: "40",
+  },
+  {
+    value: "48",
+    label: "48",
+  },
+  {
+    value: "64",
+    label: "64",
+  },
+  {
+    value: "96",
+    label: "96",
+  },
+  {
+    value: "128",
+    label: "128",
   },
 ]
 

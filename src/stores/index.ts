@@ -35,7 +35,7 @@ export const useStore = defineStore('main', {
       if (!object) return
       const { objectId } = object as any
       
-      const shapeData: any = object.toJSON(['selectable'])
+      const shapeData: any = object.toJSON(['selectable', 'lockScalingX', 'lockScalingY'])
       addObjectIdToGroupObjects(object, shapeData)
     
       const index = this.getIndexById(objectId)

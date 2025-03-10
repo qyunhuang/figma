@@ -6,8 +6,8 @@ This is a clone of the Figma website using Vue3.
 
 ### Features
 
-- **Shape Tools**: rectangle, ellipse, line, triangle, text, and pencil.
-- **Layers Management**: group, lock, delete, bring to front, and send to back.
+- **Shape Tools**: rectangle, ellipse, line, triangle, image, text, and pencil.
+- **Layers Management**: group, lock, delete, copy, paste, bring to front, and send to back.
 - **Attributes Editing**: position, layout, typography, fill, stroke, and export.
 
 ### Tech Used
