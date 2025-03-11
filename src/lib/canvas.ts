@@ -334,8 +334,8 @@ export const handleCanvasObjectsGrouped = ({
 }: CanvasObjectGrouped) => {
   const activeObjects = canvas.getActiveObjects();
   if (activeObjects.length > 1) {
-    const left = Math.min(...activeObjects.map((obj: any) => obj.group.left))
-    const top = Math.min(...activeObjects.map((obj: any) => obj.group.top))
+    const left = activeObjects[0].group!.left as number
+    const top = activeObjects[0].group!.top as number
 
     // 复制对象并处理组的情况
     const clonedObjects = activeObjects.map((obj: any) => {

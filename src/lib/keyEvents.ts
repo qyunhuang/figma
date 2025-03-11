@@ -3,12 +3,31 @@ import { fabric } from "fabric"
 
 export const handleCopy = (canvas: fabric.Canvas) => {
   const activeObjects = canvas.getActiveObjects()
-  if (activeObjects.length > 0) {
-    const serializedObjects = activeObjects.map((obj) => obj.toObject())
+  const padding = 20
+  if (activeObjects.length === 1) {
+    const serializedObjects = [{
+      ...activeObjects[0].toObject(),
+      left: activeObjects[0].left as number + padding,
+      top: activeObjects[0].top as number + padding,
+    }]
+    localStorage.setItem("clipboard", JSON.stringify(serializedObjects))
+  } else if (activeObjects.length > 1) {
+    const groupLeft = activeObjects[0].group?.left as number
+    const groupTop = activeObjects[0].group?.top as number
+    const groupWidth = activeObjects[0].group?.width as number
+    const groupHeight = activeObjects[0].group?.height as number
+
+    const serializedObjects = activeObjects.map((obj) => {
+      const left = obj.left as number
+      const top = obj.top as number
+      return {
+        ...obj.toObject(),
+        left: groupLeft + groupWidth / 2 + left + padding,
+        top: groupTop + groupHeight / 2 + top + padding,
+      }
+    })
     localStorage.setItem("clipboard", JSON.stringify(serializedObjects))
   }
-
-  return activeObjects
 }
 
 export const handlePaste = (
