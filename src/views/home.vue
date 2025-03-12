@@ -4,19 +4,19 @@
     @contextmenu.prevent="handleRightClick"
   >
     <LeftSideBar 
-      :fabric="fabricRef" 
+      :fabric="fabricCanvas" 
       :selectedObjectIds="selectedObjectIdsRef"
       :setSelectedObjectIds="setSelectedObjectIdsRef"
     />
     <CanvasContainer :onMounted="handleCanvasMounted" />
     <RightSideBar 
-      :fabric="fabricRef" 
+      :fabric="fabricCanvas" 
       :setElAttrs="setElAttrsRef" 
       :elAttrs="elAttrsRef" 
       :syncShapeInStorage="syncShapeInStorage" 
     />
     <ToolBelt 
-      :fabric="fabricRef" 
+      :fabric="fabricCanvas" 
       :selectedToolRef="selectedToolRef" 
       :setSelectedToolRef="setSelectedToolRef" 
       :addImage="addImage"
@@ -66,8 +66,8 @@ const redo = store.redo
 const frontShapeInStorage = store.frontShapeInStorage
 const backShapeInStorage = store.backShapeInStorage
 
+let fabricCanvas: fabric.Canvas = {} as fabric.Canvas
 const canvasRef = ref<HTMLCanvasElement | null>(null)
-const fabricRef = ref<fabric.Canvas | null>(null)
 const shapeRef = ref<fabric.Object | null>(null)
 const selectedToolRef = ref<OptionType>('move')
 const startPointRef = ref<{ x: number; y: number } | null>(null)
@@ -92,25 +92,25 @@ const elAttrsRef = ref<Attributes>({
 const contextMenuRef = ref<InstanceType<typeof ContextMenu> | null>(null)
 
 const addImage = (imgUrl: string) => {
-  if (!fabricRef.value) return
-  handleCanvasAddImage({ canvas: fabricRef.value, imgUrl, syncShapeInStorage })
+  if (!fabricCanvas) return
+  handleCanvasAddImage({ canvas: fabricCanvas, imgUrl, syncShapeInStorage })
 }
 
 const handleRightClick = (event: MouseEvent) => {
-  if (!fabricRef.value || fabricRef.value.getActiveObjects().length < 1) return
+  if (!fabricCanvas || fabricCanvas.getActiveObjects().length < 1) return
   contextMenuRef.value?.openMenu(event)
 }
 
 const handleMenuSelect = (value: string) => {
-  if (!fabricRef.value) return
+  if (!fabricCanvas) return
   if (value === 'group') {
-    handleCanvasObjectsGrouped({ canvas: fabricRef.value, syncShapeInStorage, deleteShapeInStorage })
+    handleCanvasObjectsGrouped({ canvas: fabricCanvas, syncShapeInStorage, deleteShapeInStorage })
   } else if (value === 'ungroup') {
-    handleCanvasObjectsUngrouped({ canvas: fabricRef.value, syncShapeInStorage, deleteShapeInStorage })
+    handleCanvasObjectsUngrouped({ canvas: fabricCanvas, syncShapeInStorage, deleteShapeInStorage })
   } else if (value == 'front') {
-    handleCanvasObjectFront({ canvas: fabricRef.value, frontShapeInStorage })
+    handleCanvasObjectFront({ canvas: fabricCanvas, frontShapeInStorage })
   } else if (value === 'back') {
-    handleCanvasObjectBack({ canvas: fabricRef.value, backShapeInStorage })
+    handleCanvasObjectBack({ canvas: fabricCanvas, backShapeInStorage })
   }
 }
 
@@ -123,15 +123,15 @@ const setElAttrsRef = (attrs: Attributes) => {
 }
 
 const setSelectedObjectIdsRef = (ids: string[]) => {
-  if (!fabricRef.value) return
+  if (!fabricCanvas) return
   selectedObjectIdsRef.value = ids
-  handleCanvasObjectSelected({ canvas: fabricRef.value, objectIds: ids, isProgrammaticSelectionRef })
+  handleCanvasObjectSelected({ canvas: fabricCanvas, objectIds: ids, isProgrammaticSelectionRef })
 }
 
 watch(() => selectedToolRef.value, (shape) => {
-  if (shape === 'pencil' && fabricRef.value) {
-    fabricRef.value.isDrawingMode = true
-    fabricRef.value.freeDrawingBrush.width = 1
+  if (shape === 'pencil' && fabricCanvas) {
+    fabricCanvas.isDrawingMode = true
+    fabricCanvas.freeDrawingBrush.width = 1
   }
 })
 
@@ -139,7 +139,7 @@ watch(() => selectedToolRef.value, (shape) => {
 const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   canvasRef.value = ref
 
-  const canvas = initializeFabric({ canvasRef, fabricRef })
+  fabricCanvas = initializeFabric({ canvasRef })
 
   // 全局样式设置
   fabric.Object.prototype.set({
@@ -158,16 +158,16 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   const rotateControls = controls.mtr
   rotateControls.visible = false
 
-  if (!canvas) return
+  if (!fabricCanvas) return
 
   const storedCanvasObjects = store.loadCanvasFromStorage()
   if (storedCanvasObjects) {
-    loadObjectsToCanvas(canvas, storedCanvasObjects)
+    loadObjectsToCanvas(fabricCanvas, storedCanvasObjects)
   }
 
   // fix this
   const guideline = new AlignGuidelines({
-    canvas,
+    canvas: fabricCanvas,
     aligningOptions: {
       lineWidth: 1.3,
     },
@@ -175,84 +175,84 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
 
   guideline.init()
 
-  canvas.on('mouse:down', (options) => {
+  fabricCanvas.on('mouse:down', (options) => {
     if (selectedToolRef.value === 'hand') {
       isDraggingRef.value = true
-      canvas.selection = false
+      fabricCanvas.selection = false
       lastPositionRef.value = { x: options.e.clientX, y: options.e.clientY }
     } else {
-      handleMouseMoveDown({ options, canvas, shapeRef, selectedToolRef, startPointRef })
+      handleMouseMoveDown({ options, canvas: fabricCanvas, shapeRef, selectedToolRef, startPointRef })
     }
   })
 
-  canvas.on('mouse:move', (options) => {
+  fabricCanvas.on('mouse:move', (options) => {
     if (isDraggingRef.value) {
       const e = options.e
-      const vpt = canvas.viewportTransform
+      const vpt = fabricCanvas.viewportTransform
       if (!vpt) return
       vpt[4] += e.clientX - lastPositionRef.value.x
       vpt[5] += e.clientY - lastPositionRef.value.y
       lastPositionRef.value = { x: e.clientX, y: e.clientY }
-      canvas.renderAll()
+      fabricCanvas.renderAll()
     } else {
-      handleMouseMove({ options, canvas, shapeRef, selectedToolRef, startPointRef })
+      handleMouseMove({ options, canvas: fabricCanvas, shapeRef, selectedToolRef, startPointRef })
     }
   })
 
-  canvas.on('mouse:up', () => {
+  fabricCanvas.on('mouse:up', () => {
     isDraggingRef.value = false
-    canvas.selection = true
+    fabricCanvas.selection = true
     handleMouseMoveUp({ shapeRef, syncShapeInStorage })
     if (['rect', 'line', 'ellipse', 'triangle', 'text'].includes(selectedToolRef.value)) {
       selectedToolRef.value = 'move'
     }
   })
 
-  canvas.on('mouse:wheel', function (options) {
+  fabricCanvas.on('mouse:wheel', function (options) {
     const delta = options.e.deltaY
     const ctrlKey = options.e.ctrlKey
     if (ctrlKey) {
-      let zoom = canvas.getZoom()
+      let zoom = fabricCanvas.getZoom()
       zoom *= 0.999 ** delta
       if (zoom > 20) zoom = 20
       if (zoom < 0.01) zoom = 0.01
-      const pointer = canvas.getPointer(options.e)
-      canvas.zoomToPoint({ x: pointer.x, y: pointer.y }, zoom)
+      const pointer = fabricCanvas.getPointer(options.e)
+      fabricCanvas.zoomToPoint({ x: pointer.x, y: pointer.y }, zoom)
       options.e.preventDefault()
       options.e.stopPropagation()
     }
   })
 
-  canvas.on('selection:created', (options) => {
+  fabricCanvas.on('selection:created', (options) => {
     handleCanvasSelectionCreated({ options, setElAttrsRef, setSelectedObjectIdsRef, isProgrammaticSelectionRef })
   })
 
-  canvas.on('selection:updated', (options) => {
+  fabricCanvas.on('selection:updated', (options) => {
     handleCanvasSelectionCreated({ options, setElAttrsRef, setSelectedObjectIdsRef, isProgrammaticSelectionRef })
   })
 
-  canvas.on('selection:cleared', () => {
+  fabricCanvas.on('selection:cleared', () => {
     handleCanvasSelectionCleared({ setElAttrsRef, setSelectedObjectIdsRef })
   })
 
-  canvas.on("object:moving", (options) => {
-    handleCanvasObjectMoving({ options, elAttrsRef, canvas, setElAttrsRef })
+  fabricCanvas.on("object:moving", (options) => {
+    handleCanvasObjectMoving({ options, elAttrsRef, canvas: fabricCanvas, setElAttrsRef })
   })
 
-  canvas.on("object:scaling", (options) => {
-    handleCanvasObjectScaling({ options, elAttrsRef, canvas, setElAttrsRef })
+  fabricCanvas.on("object:scaling", (options) => {
+    handleCanvasObjectScaling({ options, elAttrsRef, canvas: fabricCanvas, setElAttrsRef })
   })
 
-  canvas.on("object:modified", (options) => {
+  fabricCanvas.on("object:modified", (options) => {
     handleCanvasObjectModified({ options, syncShapeInStorage });
   });
 
-  canvas.on("path:created", (options) => {
+  fabricCanvas.on("path:created", (options) => {
     handleCanvasPathCreated({ options, syncShapeInStorage })
   })
 
   window.addEventListener("keydown", (e) => {
-    handleKeyDown({ e, canvas, syncShapeInStorage, deleteShapeInStorage, undo, redo })
+    handleKeyDown({ e, canvas: fabricCanvas, syncShapeInStorage, deleteShapeInStorage, undo, redo })
   })
 }
 

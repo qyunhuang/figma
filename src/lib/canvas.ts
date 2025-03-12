@@ -50,23 +50,21 @@ const defaultAttributes = {
 }
 
 export const initializeFabric = ({
-  fabricRef,
   canvasRef,
 }: {
-  fabricRef: Ref<fabric.Canvas | null>
   canvasRef: Ref<HTMLCanvasElement | null>
 }) => {
   // 确保 canvasRef.value 存在且是 HTMLCanvasElement
   if (!canvasRef.value) {
     console.error('Canvas element is not available.')
-    return
+    return {} as fabric.Canvas
   }
 
   // 获取 canvas 元素的父容器尺寸
   const canvasElement = canvasRef.value
   if (!canvasElement) {
     console.error('Canvas is not available.')
-    return
+    return {} as fabric.Canvas
   }
 
   // 初始化 Fabric.js 画布
@@ -77,9 +75,6 @@ export const initializeFabric = ({
     selectionBorderColor: '#0d99ff',
     selectionColor: '#0d99ff22',
   })
-
-  // 将 Fabric.js 画布实例赋值给 fabricRef
-  fabricRef.value = canvas
 
   return canvas
 }
