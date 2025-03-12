@@ -84,9 +84,46 @@ export const handleMouseMoveDown = ({
   canvas,
   selectedToolRef,
   shapeRef,
+  pathToDrawRef,
 }: CanvasMouseMoveDown) => {
   const pointer = canvas.getPointer(options.e)
   const target = canvas.findTarget(options.e, false)
+
+  if (selectedToolRef.value === "pen") {
+    if (!pathToDrawRef.value) {
+      pathToDrawRef.value = new fabric.Path(`M${pointer.x} ${pointer.y} L${pointer.x} ${pointer.y}`, {
+        strokeWidth: 2,
+        stroke: '#000000',
+        fill: 'transparent',
+      })
+      pathToDrawRef.value.selectable = false
+      // pathToDrawRef.value.evented = false
+      pathToDrawRef.value.strokeUniform = true
+      canvas.add(pathToDrawRef.value)
+    } else {
+      pathToDrawRef.value.path?.push(['L', pointer.x, pointer.y] as any)
+
+      // recalc path dimensions
+      // @ts-ignore
+      let dims = pathToDrawRef.value._calcDimensions()
+      pathToDrawRef.value.set({
+        width: dims.width,
+        height: dims.height,
+        left: dims.left,
+        top: dims.top,
+        // @ts-ignore
+        pathOffset: {
+          x: dims.width / 2 + dims.left,
+          y: dims.height / 2 + dims.top
+        },
+        dirty: true
+      })
+      pathToDrawRef.value.setCoords()
+    }
+
+    canvas.renderAll()
+    return
+  }
 
   if (target && target.type === selectedToolRef.value) {
     canvas.setActiveObject(target)
@@ -106,14 +143,41 @@ export const handleMouseMove = ({
   options,
   canvas,
   selectedToolRef,
-  shapeRef
+  shapeRef,
+  pathToDrawRef,
+  updatedPathRef,
 }: CanvasMouseMove) => {
   if (selectedToolRef.value === "pencil") return
+  const pointer = canvas.getPointer(options.e)
+
+  if (selectedToolRef.value === "pen" && pathToDrawRef.value) {
+    updatedPathRef.value = ['L', pointer.x, pointer.y]
+
+    pathToDrawRef.value.path?.pop()
+
+    pathToDrawRef.value.path?.push(updatedPathRef.value as any)
+
+    // @ts-ignore
+    let dims = pathToDrawRef.value._calcDimensions();
+    pathToDrawRef.value.set({
+      width: dims.width,
+      height: dims.height,
+      left: dims.left,
+      top: dims.top,
+      // @ts-ignore
+      pathOffset: {
+        x: dims.width / 2 + dims.left,
+        y: dims.height / 2 + dims.top
+      },
+      dirty: true
+    })
+    canvas.renderAll()
+  }
+
   canvas.isDrawingMode = false
   if (shapeRef.value) {
     shapeRef.value.set({ visible: true })
   }
-  const pointer = canvas.getPointer(options.e)
   // fix this
   switch (selectedToolRef?.value) {
     case "rect":

@@ -7,6 +7,7 @@ export type CanvasMouseMoveDown = {
   canvas: fabric.Canvas;
   selectedToolRef: any;
   shapeRef: Ref<fabric.Object | null>;
+  pathToDrawRef: Ref<fabric.Path | null>;
 }
 
 export type CanvasMouseMove = {
@@ -14,6 +15,8 @@ export type CanvasMouseMove = {
   canvas: fabric.Canvas;
   selectedToolRef: any;
   shapeRef: Ref<fabric.Object | null>;
+  pathToDrawRef: Ref<fabric.Path | null>;
+  updatedPathRef: Ref<[string, number, number] | null>;
 }
 
 export type CanvasMouseMoveUp = {

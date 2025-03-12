@@ -75,7 +75,7 @@
       <div class="py-3 px-4 font-medium text-[12px] fill-block">
         Fill
       </div>
-      <div v-if="$props.elAttrs.fill" class="pb-2 px-4 flex gap-2">
+      <div v-if="$props.elAttrs.fill && $props.elAttrs.fill !== 'transparent'" class="pb-2 px-4 flex gap-2">
         <FillInput
           left-text=""
           right-text="%"
@@ -198,7 +198,7 @@ const layoutBlockColor = computed(() => {
 })
 
 const fillBlockColor = computed(() => {
-  return props.elAttrs.fill ? '#000' : '#ababab'
+  return (props.elAttrs.fill && props.elAttrs.fill !== 'transparent') ? '#000' : '#ababab'
 })
 
 const handleModifyShape = ({

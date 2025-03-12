@@ -89,6 +89,8 @@ const elAttrsRef = ref<Attributes>({
   fontWeight: '',
 })
 const contextMenuRef = ref<InstanceType<typeof ContextMenu> | null>(null)
+const pathToDrawRef = ref<fabric.Path | null>(null)
+const updatedPathRef = ref<[string, number, number] | null>(null)
 
 let lastPositionRef: { x: number; y: number } = { x: 0, y: 0 }
 
@@ -176,13 +178,44 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
 
   guideline.init()
 
+  const cancelDrawing = () => {
+    if (!pathToDrawRef.value) return
+    pathToDrawRef.value.path?.pop()
+
+    if (pathToDrawRef.value.path && pathToDrawRef.value.path.length > 1) {
+       // @ts-ignore
+      let dims = pathToDrawRef.value._calcDimensions();
+      pathToDrawRef.value.set({
+        width: dims.width,
+        height: dims.height,
+        left: dims.left,
+        top: dims.top,
+         // @ts-ignore
+        pathOffset: {
+          x: dims.width / 2 + dims.left,
+          y: dims.height / 2 + dims.top
+        },
+        dirty: true,
+        selectable: true,
+      })
+      syncShapeInStorage(pathToDrawRef.value)
+        
+    } else {
+      fabricCanvas.remove(pathToDrawRef.value);
+    }
+
+    fabricCanvas.renderAll()
+
+    pathToDrawRef.value = null
+  }
+
   fabricCanvas.on('mouse:down', (options) => {
     if (selectedToolRef.value === 'hand') {
       isDraggingRef.value = true
       fabricCanvas.selection = false
       lastPositionRef = { x: options.e.clientX, y: options.e.clientY }
     } else {
-      handleMouseMoveDown({ options, canvas: fabricCanvas, shapeRef, selectedToolRef })
+      handleMouseMoveDown({ options, canvas: fabricCanvas, shapeRef, selectedToolRef, pathToDrawRef })
     }
   })
 
@@ -196,7 +229,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
       lastPositionRef = { x: e.clientX, y: e.clientY }
       fabricCanvas.renderAll()
     } else {
-      handleMouseMove({ options, canvas: fabricCanvas, shapeRef, selectedToolRef })
+      handleMouseMove({ options, canvas: fabricCanvas, shapeRef, selectedToolRef, pathToDrawRef, updatedPathRef })
     }
   })
 
@@ -253,7 +286,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   })
 
   window.addEventListener("keydown", (e) => {
-    handleKeyDown({ e, canvas: fabricCanvas, syncShapeInStorage, deleteShapeInStorage, undo, redo })
+    handleKeyDown({ e, canvas: fabricCanvas, selectedToolRef, syncShapeInStorage, deleteShapeInStorage, undo, redo, cancelDrawing })
   })
 }
 

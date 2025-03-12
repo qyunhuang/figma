@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid"
 import { fabric } from "fabric"
+import { OptionType } from '@/types/type'
 
 export const handleCopy = (canvas: fabric.Canvas) => {
   const activeObjects = canvas.getActiveObjects()
@@ -85,18 +86,37 @@ export const handleDelete = (
 export const handleKeyDown = ({
   e,
   canvas,
+  selectedToolRef,
   syncShapeInStorage,
   deleteShapeInStorage,
   undo,
   redo,
+  cancelDrawing
 }: {
   e: KeyboardEvent;
   canvas: fabric.Canvas | any;
+  selectedToolRef: Ref<OptionType>;
   syncShapeInStorage: (shape: fabric.Object) => void;
   deleteShapeInStorage: (id: string) => void;
   undo: (canvas: fabric.Canvas) => void;
   redo: (canvas: fabric.Canvas) => void;
+  cancelDrawing: () => void;
 }) => {
+  if (e.key === "Escape") {
+    if (selectedToolRef.value === "pen") {
+      cancelDrawing()
+    }
+    canvas.discardActiveObject()
+    canvas.renderAll()
+  }
+
+  if (e.key === "Enter") {
+    if (selectedToolRef.value === "pen") {
+      cancelDrawing()
+      selectedToolRef.value = "move"
+    }
+  }
+
   if (e.key === 'Delete') {
     handleDelete(canvas, deleteShapeInStorage)
   }
