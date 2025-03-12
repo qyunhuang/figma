@@ -67,12 +67,11 @@ const frontShapeInStorage = store.frontShapeInStorage
 const backShapeInStorage = store.backShapeInStorage
 
 let fabricCanvas: fabric.Canvas = {} as fabric.Canvas
+
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const shapeRef = ref<fabric.Object | null>(null)
 const selectedToolRef = ref<OptionType>('move')
-const startPointRef = ref<{ x: number; y: number } | null>(null)
 const isDraggingRef = ref<boolean>(false)
-const lastPositionRef = ref<{ x: number; y: number }>({ x: 0, y: 0 })
 const selectedObjectIdsRef = ref<string[]>([])
 const isProgrammaticSelectionRef = ref<boolean>(true)
 const elAttrsRef = ref<Attributes>({
@@ -90,6 +89,8 @@ const elAttrsRef = ref<Attributes>({
   fontWeight: '',
 })
 const contextMenuRef = ref<InstanceType<typeof ContextMenu> | null>(null)
+
+let lastPositionRef: { x: number; y: number } = { x: 0, y: 0 }
 
 const addImage = (imgUrl: string) => {
   if (!fabricCanvas) return
@@ -151,7 +152,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
     strokeUniform: true,
     borderOpacityWhenMoving: 0,
     borderScaleFactor: 1.5,
-  });
+  })
 
   // 移除旋转控制
   const controls = fabric.Object.prototype.controls
@@ -179,9 +180,9 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
     if (selectedToolRef.value === 'hand') {
       isDraggingRef.value = true
       fabricCanvas.selection = false
-      lastPositionRef.value = { x: options.e.clientX, y: options.e.clientY }
+      lastPositionRef = { x: options.e.clientX, y: options.e.clientY }
     } else {
-      handleMouseMoveDown({ options, canvas: fabricCanvas, shapeRef, selectedToolRef, startPointRef })
+      handleMouseMoveDown({ options, canvas: fabricCanvas, shapeRef, selectedToolRef })
     }
   })
 
@@ -190,12 +191,12 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
       const e = options.e
       const vpt = fabricCanvas.viewportTransform
       if (!vpt) return
-      vpt[4] += e.clientX - lastPositionRef.value.x
-      vpt[5] += e.clientY - lastPositionRef.value.y
-      lastPositionRef.value = { x: e.clientX, y: e.clientY }
+      vpt[4] += e.clientX - lastPositionRef.x
+      vpt[5] += e.clientY - lastPositionRef.y
+      lastPositionRef = { x: e.clientX, y: e.clientY }
       fabricCanvas.renderAll()
     } else {
-      handleMouseMove({ options, canvas: fabricCanvas, shapeRef, selectedToolRef, startPointRef })
+      handleMouseMove({ options, canvas: fabricCanvas, shapeRef, selectedToolRef })
     }
   })
 
