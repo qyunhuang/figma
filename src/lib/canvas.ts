@@ -85,16 +85,20 @@ export const handleMouseMoveDown = ({
   selectedToolRef,
   shapeRef,
   pathToDrawRef,
+  isMouseDownRef,
 }: CanvasMouseMoveDown) => {
   const pointer = canvas.getPointer(options.e)
   const target = canvas.findTarget(options.e, false)
 
   if (selectedToolRef.value === "pen") {
+    isMouseDownRef.value = true
     if (!pathToDrawRef.value) {
       pathToDrawRef.value = new fabric.Path(`M${pointer.x} ${pointer.y} L${pointer.x} ${pointer.y}`, {
         strokeWidth: 2,
         stroke: '#000000',
         fill: 'transparent',
+        // @ts-ignore
+        objectId: uuidv4(),
       })
       pathToDrawRef.value.selectable = false
       // pathToDrawRef.value.evented = false
@@ -146,14 +150,87 @@ export const handleMouseMove = ({
   shapeRef,
   pathToDrawRef,
   updatedPathRef,
+  isMouseDownRef,
+  rememberedPositionRef,
+  isDrawingCurveRef,
 }: CanvasMouseMove) => {
+  const inRange = (radius: number, cursorX: number, cursorY: number, targetX: number, targetY: number) => {
+    if (
+      Math.abs(cursorX - targetX) <= radius &&
+      Math.abs(cursorY - targetY) <= radius
+    ) {
+      return true
+    }
+
+    return false
+  }
+
   if (selectedToolRef.value === "pencil") return
   const pointer = canvas.getPointer(options.e)
 
   if (selectedToolRef.value === "pen" && pathToDrawRef.value) {
-    updatedPathRef.value = ['L', pointer.x, pointer.y]
+    if (!isDrawingCurveRef.value) {
+      updatedPathRef.value = ['L', pointer.x, pointer.y]
+    }
 
     pathToDrawRef.value.path?.pop()
+
+    if (pathToDrawRef.value.path && pathToDrawRef.value.path.length > 1) {
+      let snapPoints = [...pathToDrawRef.value.path]
+      snapPoints.pop()
+      for (let p of snapPoints) {
+        // @ts-ignore
+        if ((p[0] === 'L' || p[0] === 'M') && inRange(10, pointer.x, pointer.y, p[1], p[2])) {
+          // @ts-ignore
+          updatedPathRef.value[1] = p[1]
+          // @ts-ignore
+          updatedPathRef.value[2] = p[2]
+          break
+        }
+
+        // @ts-ignore
+        if (p[0] === 'Q' && inRange(10, pointer.x, pointer.y, p[3], p[4])) {
+          // @ts-ignore
+          updatedPathRef.value[1] = p[3]
+          // @ts-ignore
+          updatedPathRef.value[2] = p[4]
+          break
+        }
+      }
+    }
+
+    if (isMouseDownRef.value) {
+      if (!isDrawingCurveRef.value && pathToDrawRef.value.path && pathToDrawRef.value.path.length > 1) {
+        isDrawingCurveRef.value = true
+
+        let lastPath = pathToDrawRef.value.path.pop() as any
+
+        if (lastPath[0] === 'Q') {
+          updatedPathRef.value = ['Q', lastPath[3], lastPath[4], lastPath[3], lastPath[4]]
+          rememberedPositionRef.value.x = lastPath[3]
+          rememberedPositionRef.value.y = lastPath[4]
+        } else {
+          updatedPathRef.value = ['Q', lastPath[1], lastPath[2], lastPath[1], lastPath[2]]
+          rememberedPositionRef.value.x = lastPath[1]
+          rememberedPositionRef.value.y = lastPath[2]
+        }
+
+      } else if (isDrawingCurveRef.value) {
+        // @ts-ignore
+        let mouseMoveX = pointer.x - updatedPathRef.value[3]
+        // @ts-ignore
+        let mouseMoveY = pointer.y - updatedPathRef.value[4]
+
+        updatedPathRef.value = [
+          'Q',
+          rememberedPositionRef.value.x - mouseMoveX,
+          rememberedPositionRef.value.y - mouseMoveY,
+          rememberedPositionRef.value.x,
+          rememberedPositionRef.value.y
+        ]
+
+      }
+    }
 
     pathToDrawRef.value.path?.push(updatedPathRef.value as any)
 
@@ -172,6 +249,7 @@ export const handleMouseMove = ({
       dirty: true
     })
     canvas.renderAll()
+    return
   }
 
   canvas.isDrawingMode = false
@@ -214,13 +292,43 @@ export const handleMouseMove = ({
 }
 
 export const handleMouseMoveUp = ({
+  options,
+  canvas,
   shapeRef,
+  pathToDrawRef,
+  isDrawingCurveRef,
+  isMouseDownRef,
+  selectedToolRef,
   syncShapeInStorage,
 }: CanvasMouseMoveUp) => {
-  syncShapeInStorage(shapeRef.value as fabric.Object)
+  isMouseDownRef.value = false
+  const pointer = canvas.getPointer(options.e)
+  if (selectedToolRef.value === 'pen' && isDrawingCurveRef.value && pathToDrawRef.value) {
+    pathToDrawRef.value.path?.push(['L', pointer.x, pointer.y] as any)
 
+    // @ts-ignore
+    let dims = pathToDrawRef.value._calcDimensions()
+    pathToDrawRef.value.set({
+      width: dims.width,
+      height: dims.height,
+      left: dims.left,
+      top: dims.top,
+      // @ts-ignore
+      pathOffset: {
+        x: dims.width / 2 + dims.left,
+        y: dims.height / 2 + dims.top
+      },
+      dirty: true
+    })
+    pathToDrawRef.value.setCoords()
+    canvas.renderAll()
+  }
+  isDrawingCurveRef.value = false
+
+  
   if (shapeRef.value) {
     shapeRef.value.set({ visible: true })
+    syncShapeInStorage(shapeRef.value as fabric.Object)
   }
   shapeRef.value = null
 }

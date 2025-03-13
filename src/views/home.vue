@@ -90,7 +90,10 @@ const elAttrsRef = ref<Attributes>({
 })
 const contextMenuRef = ref<InstanceType<typeof ContextMenu> | null>(null)
 const pathToDrawRef = ref<fabric.Path | null>(null)
-const updatedPathRef = ref<[string, number, number] | null>(null)
+const updatedPathRef = ref<[string, number, number] | [string, number, number, number, number] | null>(null)
+const isMouseDownRef = ref<boolean>(false)
+const rememberedPositionRef = ref<{ x: number; y: number }>({ x: 0, y: 0 })
+const isDrawingCurveRef = ref<boolean>(false)
 
 let lastPositionRef: { x: number; y: number } = { x: 0, y: 0 }
 
@@ -215,7 +218,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
       fabricCanvas.selection = false
       lastPositionRef = { x: options.e.clientX, y: options.e.clientY }
     } else {
-      handleMouseMoveDown({ options, canvas: fabricCanvas, shapeRef, selectedToolRef, pathToDrawRef })
+      handleMouseMoveDown({ options, canvas: fabricCanvas, shapeRef, selectedToolRef, pathToDrawRef, isMouseDownRef })
     }
   })
 
@@ -229,14 +232,14 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
       lastPositionRef = { x: e.clientX, y: e.clientY }
       fabricCanvas.renderAll()
     } else {
-      handleMouseMove({ options, canvas: fabricCanvas, shapeRef, selectedToolRef, pathToDrawRef, updatedPathRef })
+      handleMouseMove({ options, canvas: fabricCanvas, shapeRef, selectedToolRef, pathToDrawRef, updatedPathRef, rememberedPositionRef, isDrawingCurveRef, isMouseDownRef })
     }
   })
 
-  fabricCanvas.on('mouse:up', () => {
+  fabricCanvas.on('mouse:up', (options) => {
     isDraggingRef.value = false
     fabricCanvas.selection = true
-    handleMouseMoveUp({ shapeRef, syncShapeInStorage })
+    handleMouseMoveUp({ options, canvas: fabricCanvas, shapeRef, syncShapeInStorage, isDrawingCurveRef, isMouseDownRef, pathToDrawRef, selectedToolRef })
     if (['rect', 'line', 'ellipse', 'triangle', 'text'].includes(selectedToolRef.value)) {
       selectedToolRef.value = 'move'
     }

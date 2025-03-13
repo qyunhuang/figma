@@ -8,6 +8,7 @@ export type CanvasMouseMoveDown = {
   selectedToolRef: any;
   shapeRef: Ref<fabric.Object | null>;
   pathToDrawRef: Ref<fabric.Path | null>;
+  isMouseDownRef: Ref<boolean>;
 }
 
 export type CanvasMouseMove = {
@@ -16,12 +17,21 @@ export type CanvasMouseMove = {
   selectedToolRef: any;
   shapeRef: Ref<fabric.Object | null>;
   pathToDrawRef: Ref<fabric.Path | null>;
-  updatedPathRef: Ref<[string, number, number] | null>;
+  updatedPathRef: Ref<[string, number, number] | [string, number, number, number, number] | null>;
+  isMouseDownRef: Ref<boolean>;
+  rememberedPositionRef: Ref<{ x: number; y: number }>;
+  isDrawingCurveRef: Ref<boolean>;
 }
 
 export type CanvasMouseMoveUp = {
+  options: fabric.IEvent;
+  canvas: fabric.Canvas;
   shapeRef: Ref<fabric.Object | null>;
   syncShapeInStorage: (shape: fabric.Object) => void;
+  selectedToolRef: any;
+  pathToDrawRef: Ref<fabric.Path | null>;
+  isMouseDownRef: Ref<boolean>;
+  isDrawingCurveRef: Ref<boolean>;
 }
 
 export type CanvasSelectionCreated = {
