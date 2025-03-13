@@ -97,31 +97,26 @@ export const handleMouseMoveDown = ({
         strokeWidth: 2,
         stroke: '#000000',
         fill: 'transparent',
-        // @ts-ignore
         objectId: uuidv4(),
-      })
+      } as any)
       pathToDrawRef.value.selectable = false
-      // pathToDrawRef.value.evented = false
       pathToDrawRef.value.strokeUniform = true
       canvas.add(pathToDrawRef.value)
     } else {
       pathToDrawRef.value.path?.push(['L', pointer.x, pointer.y] as any)
 
-      // recalc path dimensions
-      // @ts-ignore
-      let dims = pathToDrawRef.value._calcDimensions()
+      let dims = (pathToDrawRef.value as any)._calcDimensions()
       pathToDrawRef.value.set({
         width: dims.width,
         height: dims.height,
         left: dims.left,
         top: dims.top,
-        // @ts-ignore
         pathOffset: {
           x: dims.width / 2 + dims.left,
           y: dims.height / 2 + dims.top
         },
         dirty: true
-      })
+      } as any)
       pathToDrawRef.value.setCoords()
     }
 
@@ -176,23 +171,17 @@ export const handleMouseMove = ({
     pathToDrawRef.value.path?.pop()
 
     if (pathToDrawRef.value.path && pathToDrawRef.value.path.length > 1) {
-      let snapPoints = [...pathToDrawRef.value.path]
+      let snapPoints = [...pathToDrawRef.value.path] as any
       snapPoints.pop()
       for (let p of snapPoints) {
-        // @ts-ignore
-        if ((p[0] === 'L' || p[0] === 'M') && inRange(10, pointer.x, pointer.y, p[1], p[2])) {
-          // @ts-ignore
+        if ((p[0] === 'L' || p[0] === 'M') && inRange(10, pointer.x, pointer.y, p[1], p[2]) && updatedPathRef.value) {
           updatedPathRef.value[1] = p[1]
-          // @ts-ignore
           updatedPathRef.value[2] = p[2]
           break
         }
 
-        // @ts-ignore
-        if (p[0] === 'Q' && inRange(10, pointer.x, pointer.y, p[3], p[4])) {
-          // @ts-ignore
+        if (p[0] === 'Q' && inRange(10, pointer.x, pointer.y, p[3], p[4]) && updatedPathRef.value) {
           updatedPathRef.value[1] = p[3]
-          // @ts-ignore
           updatedPathRef.value[2] = p[4]
           break
         }
@@ -216,10 +205,8 @@ export const handleMouseMove = ({
         }
 
       } else if (isDrawingCurveRef.value) {
-        // @ts-ignore
-        let mouseMoveX = pointer.x - updatedPathRef.value[3]
-        // @ts-ignore
-        let mouseMoveY = pointer.y - updatedPathRef.value[4]
+        let mouseMoveX = pointer.x - (updatedPathRef.value as  [string, number, number, number, number])[3]
+        let mouseMoveY = pointer.y - (updatedPathRef.value as  [string, number, number, number, number])[4]
 
         updatedPathRef.value = [
           'Q',
@@ -234,20 +221,18 @@ export const handleMouseMove = ({
 
     pathToDrawRef.value.path?.push(updatedPathRef.value as any)
 
-    // @ts-ignore
-    let dims = pathToDrawRef.value._calcDimensions();
+    let dims = (pathToDrawRef.value as any)._calcDimensions();
     pathToDrawRef.value.set({
       width: dims.width,
       height: dims.height,
       left: dims.left,
       top: dims.top,
-      // @ts-ignore
       pathOffset: {
         x: dims.width / 2 + dims.left,
         y: dims.height / 2 + dims.top
       },
       dirty: true
-    })
+    } as any)
     canvas.renderAll()
     return
   }
@@ -306,20 +291,18 @@ export const handleMouseMoveUp = ({
   if (selectedToolRef.value === 'pen' && isDrawingCurveRef.value && pathToDrawRef.value) {
     pathToDrawRef.value.path?.push(['L', pointer.x, pointer.y] as any)
 
-    // @ts-ignore
-    let dims = pathToDrawRef.value._calcDimensions()
+    let dims = (pathToDrawRef.value as any)._calcDimensions()
     pathToDrawRef.value.set({
       width: dims.width,
       height: dims.height,
       left: dims.left,
       top: dims.top,
-      // @ts-ignore
       pathOffset: {
         x: dims.width / 2 + dims.left,
         y: dims.height / 2 + dims.top
       },
       dirty: true
-    })
+    } as any)
     pathToDrawRef.value.setCoords()
     canvas.renderAll()
   }
