@@ -7,7 +7,7 @@
       <LayerItem
         v-for="(objectId, index) in canvasObjects.map((obj) => obj.objectId)"
         :key="objectId"
-        :fabric="$props.fabric" 
+        :modify-shape-by-id="props.modifyShapeById"
         :object="canvasObjects[index]"
         :selected-object-ids="$props.selectedObjectIds"
         :class="[{ 'selected': selectedObjectIds.includes(objectId) }, 'layer-item']"
@@ -29,9 +29,9 @@ const store = useStore()
 const canvasObjects = computed(() => store.canvasObjects.toReversed())
 
 const props = defineProps<{
-  fabric: fabric.Canvas | null;
   selectedObjectIds: string[];
   setSelectedObjectIds: (ids: string[]) => void;
+  modifyShapeById: (objectId: string, key: string, value: any) => void;
 }>()
 
 const handleItemClick = (objectId: string) => {

@@ -173,14 +173,14 @@ import StrokeInput from './ui/StrokeInput.vue'
 import Select from './ui/Select.vue'
 import { RotateCw, Square, Plus, AlignJustify, Minus } from 'lucide-vue-next'
 import { Attributes } from '@/types/type'
-import { modifyShape, toUpperCaseString, toPercentage, exportToPicture } from '@/lib/shape'
+import { toUpperCaseString, toPercentage } from '@/lib/shape'
 import { fontWeightOptions, fontSizeOptions, exportOptions } from '@/constants'
 
 const props = defineProps<{
-  fabric: fabric.Canvas | null;
   elAttrs: Attributes;
   setElAttrs: (attrs: Attributes) => void;
-  syncShapeInStorage: (object: fabric.Object) => void;
+  modifyShape: (property: string, value: any) => void;
+  handleExport: (type: string) => void;
 }>()
 
 const selctedExportOption = ref('png')
@@ -216,7 +216,7 @@ const handleModifyShape = ({
   property: string;
   value: string | null;
 }) => {
-  modifyShape({ canvas: props.fabric, property, value, syncShapeInStorage: props.syncShapeInStorage })
+  props.modifyShape(property, value)
 }
 
 const handleChangeLeft = (value: string) => {
@@ -301,8 +301,7 @@ const handleChangeExportOption = (value: string) => {
 }
 
 const handleClickExport = () => {
-  if (!props.fabric) return
-  exportToPicture(selctedExportOption.value, props.fabric)
+  props.handleExport(selctedExportOption.value)
 }
 
 </script>

@@ -66,7 +66,6 @@ import Popover from '@/components/ui/Popover.vue'
 import { OptionType } from '@/types/type'
 
 const props = defineProps<{
-  fabric: fabric.Canvas | null;
   selectedToolRef: OptionType,
   setSelectedToolRef: (shape: OptionType) => void
   addImage: (imgUrl: string) => void
@@ -148,7 +147,6 @@ function setTool(newTool: string, index: number, secondIndex: number) {
       const reader = new FileReader()
       reader.onload = (e) => {
         const imgUrl = e.target?.result as string
-        if (!props.fabric) return
         props.addImage(imgUrl)
       }
       reader.readAsDataURL(file)

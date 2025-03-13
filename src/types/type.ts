@@ -121,20 +121,3 @@ export type Attributes = {
   fontSize: string;
   fontWeight: string;
 }
-
-export type ModifyShape = {
-  canvas: fabric.Canvas | null;
-  property: string;
-  value: any;
-  syncShapeInStorage: (shape: fabric.Object) => void;
-}
-
-export type ModifyVisibility = {
-  canvas: fabric.Canvas | null;
-  objectId: string;
-}
-
-export type ModifySelectablility = {
-  canvas: fabric.Canvas | null;
-  objectId: string;
-}

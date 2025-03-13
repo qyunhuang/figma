@@ -47,7 +47,7 @@
         v-for="subObject in object.objects"
         :key="subObject.objectId"
         :object="subObject"
-        :fabric="fabric"
+        :modify-shape-by-id="props.modifyShapeById"
         :selected-object-ids="selectedObjectIds"
         :grouped="true"
         :visibility="$props.visibility"
@@ -73,19 +73,18 @@ import {
   LockOpen,
   Image,
 } from 'lucide-vue-next'
-import { modifyVisibility, modifySelectablility } from '@/lib/shape'
 
 import { useStore } from '@/stores'
 
 const store = useStore()
 
 const props = defineProps<{
-  fabric: fabric.Canvas | null;
   object: any;
   selectedObjectIds: string[];
   grouped: boolean;
   visibility: boolean;
   selectablility: boolean;
+  modifyShapeById: (objectId: string, key: string, value: any) => void;
 }>()
 
 const isExpanded = ref(false)
@@ -113,13 +112,13 @@ const toggleExpand = () => {
 
 const handleChangeVisibility = (objectId: string) => {
   props.object.visible = !props.object.visible
-  modifyVisibility({ canvas: props.fabric, objectId })
+  props.modifyShapeById(objectId, 'visible', props.object.visible)
   store.modifyShapeInStorage(objectId, 'visible', props.object.visible)
 }
 
 const handleChangeSelectablility = (objectId: string) => {
   props.object.selectable = !props.object.selectable
-  modifySelectablility({ canvas: props.fabric, objectId })
+  props.modifyShapeById(objectId, 'selectable', props.object.selectable)
   store.modifyShapeInStorage(objectId, 'selectable', props.object.selectable)
 }
 

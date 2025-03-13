@@ -1,6 +1,6 @@
 import { fabric } from "fabric"
 import { v4 as uuidv4 } from "uuid"
-import { CustomFabricObject, CustomFabricGroup, ModifyShape, ModifyVisibility, ModifySelectablility } from "@/types/type"
+import { CustomFabricObject, CustomFabricGroup } from "@/types/type"
 import chroma from 'chroma-js'
 import jsPDF from 'jspdf'
 import 'svg2pdf.js'
@@ -91,7 +91,7 @@ export const createGroup = (objects: fabric.Object[], left: number, top: number,
   } as CustomFabricGroup)
 }
 
-const formatPropertyVlaue = (property: string, value: any) => {
+export const formatPropertyVlaue = (property: string, value: any) => {
   if (property === 'fill' || property === 'stroke') {
     return value
   } else if (property === 'opacity') {
@@ -129,61 +129,6 @@ export const addObjectIdToGroupObjects = (object: fabric.Object, shapeData: any)
     })
   } 
   shapeData.objectId = (object as any).objectId
-}
-
-export const modifyShape = ({
-  canvas,
-  property,
-  value,
-  syncShapeInStorage,
-}: ModifyShape) => {
-  if (!canvas) return
-  const selectedElement = canvas.getActiveObject()
-
-  if (!selectedElement || selectedElement?.type === "activeSelection") return
-
-  value = formatPropertyVlaue(property, value)
-
-  if (property === "width") {
-    selectedElement.set("scaleX", 1)
-    selectedElement.set("width", value)
-  } else if (property === "height") {
-    selectedElement.set("scaleY", 1)
-    selectedElement.set("height", value)
-  } else {
-    if (selectedElement[property as keyof object] === value) return
-    selectedElement.set(property as keyof object, value)
-  }
-
-  canvas.renderAll()
-
-  syncShapeInStorage(selectedElement)
-}
-
-export const modifyVisibility = ({
-  canvas,
-  objectId,
-}: ModifyVisibility) => {
-  if (!canvas) return
-  const selectedElement = canvas.getObjects().find((obj: any) => obj.objectId === objectId)
-
-  if (!selectedElement) return
-
-  selectedElement.visible = !selectedElement.visible
-  canvas.renderAll()
-}
-
-export const modifySelectablility = ({
-  canvas,
-  objectId,
-}: ModifySelectablility) => {
-  if (!canvas) return
-  const selectedElement = canvas.getObjects().find((obj: any) => obj.objectId === objectId)
-
-  if (!selectedElement) return
-
-  selectedElement.selectable = !selectedElement.selectable
-  canvas.renderAll()
 }
 
 export const loadObjectsToCanvas = (canvas: fabric.Canvas, objectData: any) => {

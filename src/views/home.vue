@@ -4,19 +4,18 @@
     @contextmenu.prevent="handleRightClick"
   >
     <LeftSideBar 
-      :fabric="fabricCanvas" 
       :selectedObjectIds="selectedObjectIdsRef"
       :setSelectedObjectIds="setSelectedObjectIdsRef"
+      :modify-shape-by-id="modifyShapeById"
     />
     <CanvasContainer :onMounted="handleCanvasMounted" />
     <RightSideBar 
-      :fabric="fabricCanvas" 
       :setElAttrs="setElAttrsRef" 
       :elAttrs="elAttrsRef" 
-      :syncShapeInStorage="syncShapeInStorage" 
+      :modify-shape="modifyShape"
+      :handle-export="handleExport"
     />
     <ToolBelt 
-      :fabric="fabricCanvas" 
       :selectedToolRef="selectedToolRef" 
       :setSelectedToolRef="setSelectedToolRef" 
       :addImage="addImage"
@@ -50,7 +49,9 @@ import {
   handleCanvasAddImage,
 } from '@/lib/canvas'
 import { 
-  loadObjectsToCanvas
+  loadObjectsToCanvas,
+  formatPropertyVlaue,
+  exportToPicture,
 } from '@/lib/shape'
 import { useStore } from '@/stores'
 import CanvasContainer from '@/components/CanvasContainer.vue'
@@ -98,17 +99,49 @@ const isDrawingCurveRef = ref<boolean>(false)
 let lastPositionRef: { x: number; y: number } = { x: 0, y: 0 }
 
 const addImage = (imgUrl: string) => {
-  if (!fabricCanvas) return
   handleCanvasAddImage({ canvas: fabricCanvas, imgUrl, syncShapeInStorage })
 }
 
+const modifyShapeById = (objectId: string, key: string, value: any) => {
+  const shape = fabricCanvas.getObjects().find((obj: any) => obj.objectId === objectId)
+  if (!shape) return
+  shape.set(key as keyof object, value)
+  fabricCanvas.renderAll()
+}
+
+const modifyShape = (property: string, value: any) => {
+  const shape = fabricCanvas.getActiveObject()
+
+  if (!shape || shape?.type === "activeSelection") return
+
+  value = formatPropertyVlaue(property, value)
+
+  if (property === "width") {
+    shape.set("scaleX", 1)
+    shape.set("width", value)
+  } else if (property === "height") {
+    shape.set("scaleY", 1)
+    shape.set("height", value)
+  } else {
+    if (shape[property as keyof object] === value) return
+    shape.set(property as keyof object, value)
+  }
+
+  fabricCanvas.renderAll()
+
+  syncShapeInStorage(shape)
+}
+
+const handleExport = (pictureType: string) => {
+  exportToPicture(pictureType, fabricCanvas)
+}
+
 const handleRightClick = (event: MouseEvent) => {
-  if (!fabricCanvas || fabricCanvas.getActiveObjects().length < 1) return
+  if (fabricCanvas.getActiveObjects().length < 1) return
   contextMenuRef.value?.openMenu(event)
 }
 
 const handleMenuSelect = (value: string) => {
-  if (!fabricCanvas) return
   if (value === 'group') {
     handleCanvasObjectsGrouped({ canvas: fabricCanvas, syncShapeInStorage, deleteShapeInStorage })
   } else if (value === 'ungroup') {
@@ -129,7 +162,6 @@ const setElAttrsRef = (attrs: Attributes) => {
 }
 
 const setSelectedObjectIdsRef = (ids: string[]) => {
-  if (!fabricCanvas) return
   selectedObjectIdsRef.value = ids
   handleCanvasObjectSelected({ canvas: fabricCanvas, objectIds: ids, isProgrammaticSelectionRef })
 }
@@ -163,8 +195,6 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
   const controls = fabric.Object.prototype.controls
   const rotateControls = controls.mtr
   rotateControls.visible = false
-
-  if (!fabricCanvas) return
 
   const storedCanvasObjects = store.loadCanvasFromStorage()
   if (storedCanvasObjects) {
