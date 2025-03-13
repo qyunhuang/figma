@@ -94,7 +94,7 @@ export const handleMouseMoveDown = ({
     isMouseDownRef.value = true
     if (!pathToDrawRef.value) {
       pathToDrawRef.value = new fabric.Path(`M${pointer.x} ${pointer.y} L${pointer.x} ${pointer.y}`, {
-        strokeWidth: 2,
+        strokeWidth: 1,
         stroke: '#000000',
         fill: 'transparent',
         objectId: uuidv4(),

@@ -72,10 +72,15 @@
       </div>
     </div>
     <div class="block">
-      <div class="py-3 px-4 font-medium text-[12px] fill-block">
-        Fill
+      <div class="flex justify-between items-center">
+        <div class="py-3 px-4 font-medium text-[12px] fill-block">
+          Fill
+        </div>
+        <div v-if="$props.elAttrs.fill !== 'Mixed'" class="plus" @click="handleAddFill">
+          <Plus :size="18" :color="fillBlockColor" stroke-width="1" />
+        </div>
       </div>
-      <div v-if="$props.elAttrs.fill && $props.elAttrs.fill !== 'transparent'" class="pb-2 px-4 flex gap-2">
+      <div v-if="$props.elAttrs.fill && $props.elAttrs.fill !== 'transparent'" class="pb-2 px-4 flex gap-11">
         <FillInput
           left-text=""
           right-text="%"
@@ -93,6 +98,9 @@
             />
           </template>
         </FillInput>
+        <div class="minus" @click="handleRemoveFill">
+          <Minus :size="18" color="#000" stroke-width="1" />
+        </div>
       </div>
     </div>
     <div class="block">
@@ -252,10 +260,21 @@ const handleAddStroke = () => {
   handleModifyShape({ property: 'strokeWidth', value: '1' })
 }
 
+const handleAddFill = () => {
+  props.setElAttrs({ ...props.elAttrs, fill: '#000000' })
+  handleModifyShape({ property: 'fill', value: '#000000' })
+}
+
 const handleRemoveStroke = () => {
   props.setElAttrs({ ...props.elAttrs, strokeWidth: '', stroke: '' })
   handleModifyShape({ property: 'stroke', value: null })
 }
+
+const handleRemoveFill = () => {
+  props.setElAttrs({ ...props.elAttrs, fill: '' })
+  handleModifyShape({ property: 'fill', value: null })
+}
+
 
 const handleChangeStroke = (value: string) => {
   props.setElAttrs({ ...props.elAttrs, stroke: value })

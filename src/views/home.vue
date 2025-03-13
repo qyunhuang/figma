@@ -202,6 +202,7 @@ const handleCanvasMounted = (ref: HTMLCanvasElement | null) => {
         selectable: true,
       })
       syncShapeInStorage(pathToDrawRef.value)
+      fabricCanvas.setActiveObject(pathToDrawRef.value)
         
     } else {
       fabricCanvas.remove(pathToDrawRef.value);
